@@ -10,7 +10,7 @@ export default function CreateSvg() {
 	 * ONE_CLASS shows how one class is created alone
 	 * To check for two classes being created replace ONE_CLASS with TWO_CLASSES_WITH_ASSOCIATION
 	 */
-	jsonToSVG(svg, ONE_CLASS);
+	jsonToSVG(svg, TWO_CLASSES_WITH_ASSOCIATION);
 }
 
 /**
@@ -38,13 +38,20 @@ export default function CreateSvg() {
  */
 function jsonToSVG(svg, json) {
 	if (typeof json === "object") {
-		for (const key in json) {
-			if (key === "classes" && Array.isArray(json[key])) {
-				json[key].forEach((element, index) => {
-					console.log("element: ", element, index);
-					createClassBox(svg, element.name, index);
-				});
-			}
+		if (Array.isArray(json["classes"])) {
+			json.classes.forEach((element, index) => {
+				const values = json.layout.containers[0].value;
+				var coordinates = values.find((obj) => {
+					return obj.key === element._id;
+				}).value;
+				createClassBox(
+					svg,
+					element.name,
+					element._id,
+					coordinates.x,
+					coordinates.y
+				);
+			});
 		}
 	}
 }
@@ -54,21 +61,21 @@ function createSvg() {
 	 * Create SVG representation
 	 */
 	let svg = document.createElementNS(NS, "svg");
-	svg.setAttribute("width", "500");
-	svg.setAttribute("height", "200");
-	svg.setAttribute("viewBox", "0 0 100 100");
+	svg.setAttribute("width", "1000");
+	svg.setAttribute("height", "500");
+	svg.setAttribute("viewBox", "-0.5 -0.5 950 500");
 	svg.style.backgroundColor = "grey";
 	document.body.appendChild(svg);
 	return svg;
 }
 
-function createClassBox(svg, name, index) {
+function createClassBox(svg, name, classId, x, y) {
 	/**
 	 * Create SVG group
 	 */
 	let g = document.createElementNS(NS, "g");
-	g.setAttribute("transform", "translate(-10, 20)");
-	g.setAttribute("id", "class-" + index); //? This is the id of the class
+	g.setAttribute("transform", `translate(${x}, ${y})`);
+	g.setAttribute("id", "class-" + classId); //? This is the id of the class
 	svg.appendChild(g);
 
 	/**
@@ -105,7 +112,7 @@ function createClassBox(svg, name, index) {
 	g.appendChild(g2);
 
 	let className = document.createElementNS(NS, "text");
-	className.setAttribute("id", "className-" + index);
+	className.setAttribute("id", "className-" + classId);
 	className.setAttribute("x", "79.5");
 	className.setAttribute("y", "17.5");
 	g2.appendChild(className);
