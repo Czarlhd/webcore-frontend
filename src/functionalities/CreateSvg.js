@@ -38,16 +38,35 @@ export default function CreateSvg() {
  */
 function jsonToSVG(svg, json) {
 	if (typeof json === "object") {
+		//Gets the values for all component
+		const values = json.layout.containers[0].value;
+
+		//Create Classes
 		if (Array.isArray(json["classes"])) {
-			json.classes.forEach((element, index) => {
-				const values = json.layout.containers[0].value;
-				var coordinates = values.find((obj) => {
-					return obj.key === element._id;
+			json.classes.forEach((Class, index) => {
+				var coordinates = values.find((value) => {
+					return value.key === Class._id;
 				}).value;
 				createClassBox(
 					svg,
-					element.name,
-					element._id,
+					Class.name,
+					Class._id,
+					coordinates.x,
+					coordinates.y
+				);
+			});
+		}
+
+		//Create Associations
+		//"?." checks if association exists
+		if (json?.associations) {
+			json.associations.forEach((association) => {
+				var coordinates = values.find((value) => {
+					return value.key === association._id;
+				}).value;
+				createAssociation(
+					svg,
+					association._id,
 					coordinates.x,
 					coordinates.y
 				);
@@ -151,3 +170,5 @@ function createClassBox(svg, name, classId, x, y) {
 	path4.setAttribute("pointer-events", "none");
 	g.appendChild(path4);
 }
+
+function createAssociation(svg, associationId, x, y) {}
