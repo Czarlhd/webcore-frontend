@@ -1,4 +1,4 @@
-import { ONE_CLASS, TWO_CLASSES_WITH_ASSOCIATION } from "../assets/CDM_details";
+import { ONE_CLASS, TWO_CLASSES_WITH_ASSOCIATION, TEST } from "../assets/CDM_details";
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -10,7 +10,7 @@ export default function CreateSvg() {
 	 * ONE_CLASS shows how one class is created alone
 	 * To check for two classes being created replace ONE_CLASS with TWO_CLASSES_WITH_ASSOCIATION
 	 */
-	jsonToSVG(svg, TWO_CLASSES_WITH_ASSOCIATION);
+	jsonToSVG(svg, TEST);
 }
 
 /**
@@ -54,24 +54,29 @@ function jsonToSVG(svg, json) {
 					coordinates.x,
 					coordinates.y
 				);
+
+				//Create Associations
+				//"?." checks if association exists
+				if (json?.associations) {
+					json.associations.forEach((association) => {
+
+						if (association.name !== "_" + Class.name) return; //? This is to avoid creating creating an association from both classes between each other
+
+						var coordinates = values.find((value) => {
+							return value.key === association._id;
+						}).value; //Coordinates of the association 
+						createAssociation(
+							svg,
+							Class._id,
+							association._id,
+							coordinates.x,
+							coordinates.y
+						);
+					});
+				}
 			});
 		}
 
-		//Create Associations
-		//"?." checks if association exists
-		if (json?.associations) {
-			json.associations.forEach((association) => {
-				var coordinates = values.find((value) => {
-					return value.key === association._id;
-				}).value;
-				createAssociation(
-					svg,
-					association._id,
-					coordinates.x,
-					coordinates.y
-				);
-			});
-		}
 	}
 }
 
@@ -171,4 +176,7 @@ function createClassBox(svg, name, classId, x, y) {
 	g.appendChild(path4);
 }
 
-function createAssociation(svg, associationId, x, y) {}
+function createAssociation(svg, classId, associationId, x, y) {
+	//? Ask how to get lines because we only have the start coordinates of the association and what is dashed line
+	console.log(svg.getElementById("class-" + classId));
+}
