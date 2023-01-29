@@ -7,8 +7,12 @@ import ApisFunctionalities from "./functionalities/ApisFunctionalities";
 function App() {
 	return (
 		<div className="App">
-			{/* <ApisFunctionalities/> */}
-			<CreateSvg />
+			{/* <div>
+				<ApisFunctionalities />
+	</div>*/}
+			<div>
+				<CreateSvg />
+			</div>
 		</div>
 	);
 }

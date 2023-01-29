@@ -1,4 +1,9 @@
-import { ONE_CLASS, TWO_CLASSES_WITH_ASSOCIATION, TEST } from "../assets/CDM_details";
+import {
+	ONE_CLASS,
+	TWO_CLASSES_WITH_ASSOCIATION,
+	TEST,
+	ONE_CLASS_ONE_ATTRIBUTE,
+} from "../assets/CDM_details";
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -10,7 +15,7 @@ export default function CreateSvg() {
 	 * ONE_CLASS shows how one class is created alone
 	 * To check for two classes being created replace ONE_CLASS with TWO_CLASSES_WITH_ASSOCIATION
 	 */
-	jsonToSVG(svg, TEST);
+	jsonToSVG(svg, TWO_CLASSES_WITH_ASSOCIATION);
 }
 
 /**
@@ -47,24 +52,29 @@ function jsonToSVG(svg, json) {
 				var coordinates = values.find((value) => {
 					return value.key === Class._id;
 				}).value;
+				let attributes = [];
+				if (Class.attributes) {
+					attributes = Class.attributes; //If attributes exist, get them
+				}
 				createClassBox(
 					svg,
 					Class.name,
 					Class._id,
 					coordinates.x,
-					coordinates.y
+					coordinates.y,
+					attributes,
+					json.types
 				);
 
-				//Create Associations
+				//TODO Create Associations
 				//"?." checks if association exists
 				if (json?.associations) {
 					json.associations.forEach((association) => {
-
 						if (association.name !== "_" + Class.name) return; //? This is to avoid creating creating an association from both classes between each other
 
 						var coordinates = values.find((value) => {
 							return value.key === association._id;
-						}).value; //Coordinates of the association 
+						}).value; //Coordinates of the association
 						createAssociation(
 							svg,
 							Class._id,
@@ -76,7 +86,6 @@ function jsonToSVG(svg, json) {
 				}
 			});
 		}
-
 	}
 }
 
@@ -93,7 +102,7 @@ function createSvg() {
 	return svg;
 }
 
-function createClassBox(svg, name, classId, x, y) {
+function createClassBox(svg, name, classId, x, y, attributes, types) {
 	/**
 	 * Create SVG group
 	 */
@@ -147,9 +156,14 @@ function createClassBox(svg, name, classId, x, y) {
 	/**
 	 * Create the attributes rectangle
 	 */
+	const attributesBoxHeight = 30 + attributes.length * 15;
+	// const attributesBoxHeight = 45;
 	let path2 = document.createElementNS(NS, "path");
-	path2.setAttribute("d", "M 0 26 L 0 34 L 160 34 L 160 26");
-	path2.setAttribute("fill", "none");
+	path2.setAttribute(
+		"d",
+		`M 0 26 L 0 ${attributesBoxHeight} L 160 ${attributesBoxHeight} L 160 26`
+	); //Changes the attributes rectangle height
+	path2.setAttribute("fill", "white");
 	path2.setAttribute("stroke", "rgb(0, 0, 0)");
 	path2.setAttribute("stroke-miterlimit", "10");
 	path2.setAttribute("pointer-events", "none");
@@ -159,6 +173,44 @@ function createClassBox(svg, name, classId, x, y) {
 	 * TODO: Create attributes text box
 	 */
 
+	if (attributes.length > 0) {
+		let gPath = document.createElementNS(NS, "g");
+		gPath.setAttribute("fill", "rgb(0, 0, 0)");
+		gPath.setAttribute("font-family", "Helvetica");
+		gPath.setAttribute("pointer-events", "none");
+		gPath.setAttribute("font-size", "12");
+		g.appendChild(gPath);
+
+		attributes.forEach((attribute, index) => {
+			let y = 40 + index * 15;
+			let type = types
+				.find((type) => type._id === attribute.type)
+				.eClass.split("CD")[1];
+
+			let attributeName = document.createElementNS(NS, "text");
+			attributeName.setAttribute("id", "attribute-" + attribute._id);
+			attributeName.setAttribute("x", "5.5");
+			attributeName.setAttribute("y", `${y}`);
+			gPath.appendChild(attributeName);
+
+			var attributeText = document.createTextNode(
+				`${type}: ${attribute.name}`
+			);
+			attributeName.appendChild(attributeText);
+		});
+
+		// let attributeNam = document.createElementNS(NS, "text");
+		// attributeNam.setAttribute("id", "attribute-" + 11);
+		// attributeNam.setAttribute("x", "5.5");
+		// attributeNam.setAttribute("y", "55");
+		// gPath.appendChild(attributeNam);
+
+		// var attributeText2 = document.createTextNode(
+		// 	"int" + attributes[0].name
+		// );
+		// attributeNam.appendChild(attributeText2);
+	}
+
 	/**
 	 *  TODO: Create the methods Text box
 	 */
@@ -167,13 +219,13 @@ function createClassBox(svg, name, classId, x, y) {
 	 * Create the method rectangle for the class
 	 */
 
-	let path4 = document.createElementNS(NS, "path");
-	path4.setAttribute("d", "M 0 30 L 160 30");
-	path4.setAttribute("fill", "none");
-	path4.setAttribute("stroke", "rgb(0, 0, 0)");
-	path4.setAttribute("stroke-miterlimit", "10");
-	path4.setAttribute("pointer-events", "none");
-	g.appendChild(path4);
+	// let path4 = document.createElementNS(NS, "path");
+	// path4.setAttribute("d", "M 0 30 L 160 30");
+	// path4.setAttribute("fill", "none");
+	// path4.setAttribute("stroke", "rgb(0, 0, 0)");
+	// path4.setAttribute("stroke-miterlimit", "10");
+	// path4.setAttribute("pointer-events", "none");
+	// g.appendChild(path4);
 }
 
 function createAssociation(svg, classId, associationId, x, y) {

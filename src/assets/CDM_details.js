@@ -96,11 +96,45 @@ export const TWO_CLASSES_WITH_ASSOCIATION = {
 					lowerBound: 1,
 				},
 			],
+			attributes: [
+				{
+					_id: "23",
+					name: "Dog",
+					type: "5",
+				},
+				{
+					_id: "24",
+					name: "month",
+					type: "8",
+				},
+				{
+					_id: "25",
+					name: "day",
+					type: "7",
+				},
+			],
 		},
 		{
 			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
 			_id: "4",
 			name: "B",
+			attributes: [
+				{
+					_id: "26",
+					name: "Name",
+					type: "14",
+				},
+				{
+					_id: "27",
+					name: "Age",
+					type: "12",
+				},
+				{
+					_id: "28",
+					name: "Address",
+					type: "11",
+				},
+			],
 		},
 	],
 	types: [
@@ -193,92 +227,183 @@ export const TWO_CLASSES_WITH_ASSOCIATION = {
 	},
 };
 
+export const ONE_CLASS_ONE_ATTRIBUTE = {
+	eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//ClassDiagram",
+	_id: "null",
+	name: "1CLASS_WITH_ATTRIBUTE",
+	classes: [
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
+			_id: "1",
+			name: "X",
+			attributes: [
+				{
+					_id: "2",
+					name: "year",
+					type: "7",
+				},
+				{
+					_id: "17",
+					name: "month",
+					type: "8",
+				},
+				{
+					_id: "18",
+					name: "day",
+					type: "7",
+				},
+			],
+		},
+	],
+	types: [
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDVoid",
+			_id: "3",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDAny",
+			_id: "4",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDBoolean",
+			_id: "5",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDDouble",
+			_id: "6",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDInt",
+			_id: "7",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDLong",
+			_id: "8",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDString",
+			_id: "9",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDByte",
+			_id: "10",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDFloat",
+			_id: "11",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDChar",
+			_id: "12",
+		},
+	],
+	layout: {
+		_id: "13",
+		containers: [
+			{
+				_id: "14",
+				key: "null",
+				value: [
+					{
+						_id: "15",
+						key: "1",
+						value: {
+							_id: "16",
+							x: 408.5,
+							y: 117.0,
+						},
+					},
+				],
+			},
+		],
+	},
+};
 export const TEST = {
-        eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//ClassDiagram",
-        _id: "null",
-        name: "TEST",
-        classes: [
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
-                _id: "14",
-                name: "Class1",
-                dataType: true
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
-                _id: "16",
-                name: "Class2"
-            }
-        ],
-        types: [
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDVoid",
-                _id: "1"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDAny",
-                _id: "2"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDBoolean",
-                _id: "3"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDDouble",
-                _id: "4"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDInt",
-                _id: "5"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDLong",
-                _id: "6"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDString",
-                _id: "7"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDByte",
-                _id: "8"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDFloat",
-                _id: "9"
-            },
-            {
-                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDChar",
-                _id: "10"
-            }
-        ],
-        layout: {
-            _id: "11",
-            containers: [
-                {
-                    _id: "12",
-                    key: "null",
-                    value: [
-                        {
-                            _id: "15",
-                            key: "14",
-                            value: {
-                                _id: "null",
-                                x: 254.49988,
-                                y: 352.0001
-                            }
-                        },
-                        {
-                            _id: "17",
-                            key: "16",
-                            value: {
-                                _id: "null",
-                                x: 624.0,
-                                y: 357.0
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    }
+	eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//ClassDiagram",
+	_id: "null",
+	name: "TEST",
+	classes: [
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
+			_id: "14",
+			name: "Class1",
+			dataType: true,
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
+			_id: "16",
+			name: "Class2",
+		},
+	],
+	types: [
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDVoid",
+			_id: "1",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDAny",
+			_id: "2",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDBoolean",
+			_id: "3",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDDouble",
+			_id: "4",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDInt",
+			_id: "5",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDLong",
+			_id: "6",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDString",
+			_id: "7",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDByte",
+			_id: "8",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDFloat",
+			_id: "9",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDChar",
+			_id: "10",
+		},
+	],
+	layout: {
+		_id: "11",
+		containers: [
+			{
+				_id: "12",
+				key: "null",
+				value: [
+					{
+						_id: "15",
+						key: "14",
+						value: {
+							_id: "null",
+							x: 254.49988,
+							y: 352.0001,
+						},
+					},
+					{
+						_id: "17",
+						key: "16",
+						value: {
+							_id: "null",
+							x: 624.0,
+							y: 357.0,
+						},
+					},
+				],
+			},
+		],
+	},
+};
