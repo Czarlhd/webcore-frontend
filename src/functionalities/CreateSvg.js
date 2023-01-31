@@ -7,15 +7,17 @@ import {
 
 const NS = "http://www.w3.org/2000/svg";
 
-export default function CreateSvg() {
+export default function CreateSvg(jsonSvg) {
 	let svg = createSvg();
-	console.log("svg: ", svg);
+	// console.log("jsonSvg: ", jsonSvg);
 
 	/**
 	 * ONE_CLASS shows how one class is created alone
 	 * To check for two classes being created replace ONE_CLASS with TWO_CLASSES_WITH_ASSOCIATION
 	 */
-	jsonToSVG(svg, TWO_CLASSES_WITH_ASSOCIATION);
+	jsonToSVG(svg, jsonSvg);
+
+	return svg;
 }
 
 /**
@@ -94,11 +96,11 @@ function createSvg() {
 	 * Create SVG representation
 	 */
 	let svg = document.createElementNS(NS, "svg");
-	svg.setAttribute("width", "1000");
-	svg.setAttribute("height", "500");
+	svg.setAttribute("width", "100%");
+	svg.setAttribute("height", "600");
 	svg.setAttribute("viewBox", "-0.5 -0.5 950 500");
 	svg.style.backgroundColor = "grey";
-	document.body.appendChild(svg);
+	// document.body.appendChild(svg);
 	return svg;
 }
 
@@ -108,6 +110,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	 */
 	let g = document.createElementNS(NS, "g");
 	g.setAttribute("transform", `translate(${x}, ${y})`);
+	g.setAttribute("name", name);
 	g.setAttribute("id", "class-" + classId); //? This is the id of the class
 	svg.appendChild(g);
 
@@ -230,5 +233,5 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 
 function createAssociation(svg, classId, associationId, x, y) {
 	//? Ask how to get lines because we only have the start coordinates of the association and what is dashed line
-	console.log(svg.getElementById("class-" + classId));
+	// console.log(svg.getElementById("class-" + classId));
 }

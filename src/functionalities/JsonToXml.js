@@ -96,7 +96,7 @@ export default function JsonToXml() {
 		y: "y",
 	};
 
-	console.log(fieldsAsObjects);
+	// console.log(fieldsAsObjects);
 	let fields = fieldsAsObjects ? fieldsAsObjects : [];
 
 	function download() {
