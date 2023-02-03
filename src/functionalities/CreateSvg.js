@@ -9,7 +9,6 @@ const NS = "http://www.w3.org/2000/svg";
 
 export default function CreateSvg(jsonSvg) {
 	let svg = createSvg();
-	// console.log("jsonSvg: ", jsonSvg);
 
 	/**
 	 * ONE_CLASS shows how one class is created alone
@@ -123,7 +122,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	path1.setAttribute("fill", "rgb(255, 255, 255)");
 	path1.setAttribute("stroke", "rgb(0, 0, 0)");
 	path1.setAttribute("stroke-miterlimit", "10");
-	path1.setAttribute("pointer-events", "all");
+	path1.setAttribute("pointer-events", "none");
 	g.appendChild(path1);
 
 	let path3 = document.createElementNS(NS, "path");
@@ -151,6 +150,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	className.setAttribute("id", "className-" + classId);
 	className.setAttribute("x", "79.5");
 	className.setAttribute("y", "17.5");
+	className.setAttribute("pointer-events", "all");
 	g2.appendChild(className);
 
 	var textNode = document.createTextNode(name);
@@ -180,7 +180,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 		let gPath = document.createElementNS(NS, "g");
 		gPath.setAttribute("fill", "rgb(0, 0, 0)");
 		gPath.setAttribute("font-family", "Helvetica");
-		gPath.setAttribute("pointer-events", "none");
+		gPath.setAttribute("pointer-events", "all");
 		gPath.setAttribute("font-size", "12");
 		g.appendChild(gPath);
 

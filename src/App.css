@@ -4,6 +4,11 @@
 	background-color: beige;
 }
 
+/* .action-container-children > div:not(:last-child) {
+	margin: 0.5rem;
+	border-bottom: dashed 1px #000;
+} */
+
 .svg-container {
 	display: flex;
 	flex-direction: column;
@@ -27,4 +32,6 @@
 
 .action-container-children > * {
 	margin: 0.5rem;
+	padding-bottom: 1rem;
+	border-bottom: dashed 1px #000;
 }

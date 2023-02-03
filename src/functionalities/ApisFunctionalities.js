@@ -66,7 +66,6 @@ export const getDiagram = async (userToken) => {
 	return await axios
 		.get(API_URL + "yasmina/classdiagram/TEST", { headers: headers })
 		.then((res) => {
-			// console.log("res: " + res.data);
 			return res.data;
 		})
 		.catch((err) => {
@@ -97,7 +96,6 @@ export const addAttribute = async (
 			{ headers: headers }
 		)
 		.then((res) => {
-			console.log("res: " + res.data);
 			return res.data;
 		})
 		.catch((err) => {
@@ -106,6 +104,20 @@ export const addAttribute = async (
 		});
 };
 
+export const deleteClass = async (userToken, classId) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	return await axios
+		.delete(API_URL + `yasmina/classdiagram/TEST/class/${classId}`, {
+			headers: headers,
+		})
+		.then((res) => {
+			console.log("res: " + res.data);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
 // 	return (
 // 		<div>
 // 			{/* <input type="text" id="username" placeholder="username" />
