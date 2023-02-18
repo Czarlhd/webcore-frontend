@@ -1,28 +1,10 @@
 import axios from "axios";
-// import React from "react";
 import { API_URL } from "../constants/const";
 
 const headers = {
 	Authorization: "Bearer ",
 	"Allow-Control-Allow-Origin": "*",
 };
-
-// export default function ApisFunctionalities() {
-// delete api
-// const username = "yas123"
-// const cdmName = "cdm1"
-// const API_URL = `http://127.0.0.1:8080/${username}/classdiagram/${cdmName}/removeClass`;
-// let id = 1;
-// const deleteApi = async () => {
-// 	await axios
-// 		.delete(API_URL + "/" + 1)
-// 		.then((res) => {
-// 			console.log("res" + res);
-// 		})
-// 		.catch((err) => {
-// 			console.log(err);
-// 		});
-// };
 
 export const createUser = async () => {
 	const user = {
@@ -118,11 +100,3 @@ export const deleteClass = async (userToken, classId) => {
 			console.log(err);
 		});
 };
-// 	return (
-// 		<div>
-// 			{/* <input type="text" id="username" placeholder="username" />
-// 			<input type="text" id="password" placeholder="password" /> */}
-// 			<button onClick={createUser}>LogIn</button>
-// 		</div>
-// 	);
-// }
