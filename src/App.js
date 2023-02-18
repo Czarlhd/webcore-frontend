@@ -9,11 +9,13 @@ import {
 	addAttribute,
 	deleteClass,
 } from "./functionalities/ApisFunctionalities";
+import { TWO_CLASSES_WITH_ASSOCIATION, ONE_ASSOCIATION } from "./assets/CDM_details";
+// import MakeDraggable from "./functionalities/MakeDraggable";
 
 function App() {
 	const [classId, setClassId] = useState("");
 	const [userToken, setUserToken] = useState("");
-	const [jsonSvgRes, setJsonSvgResp] = useState(null);
+	const [jsonSvgRes, setJsonSvgResp] = useState(ONE_ASSOCIATION);
 	const [types, setTypes] = useState([]);
 	const [attributesId, setAttributeId] = useState("");
 
@@ -43,7 +45,8 @@ function App() {
 
 		var el = document.getElementById(elId);
 		// const highlight = el.getElementsByTagName("path");
-		console.log(el);
+		console.log("element", el);
+		console.log("x, y", e.clientX, e.clientY)
 
 		let className = null;
 
@@ -247,10 +250,11 @@ function App() {
 						</div>
 					</div>
 					<div className="svg-container">
-						<div className="m-2 p-2 bg-light border">
-							<p>Class Editor: </p>
-							<div onClick={svgOnClick} ref={svg} />
-						</div>
+						{/* <MakeDraggable svgOnClick={svgOnClick} id="class-1" svg={svg} /> */}
+						    <div className="m-2 p-2 bg-light border">
+								<p>Class Editor: </p>
+								<div onClick={svgOnClick} ref={svg}/>
+							</div>
 					</div>
 				</div>
 			</div>

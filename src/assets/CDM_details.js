@@ -407,3 +407,137 @@ export const TEST = {
 		],
 	},
 };
+
+export const ONE_ASSOCIATION = {
+        eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//ClassDiagram",
+        _id: "null",
+        name: "TEST",
+        classes: [
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
+                _id: "14",
+                name: "Class3",
+                associationEnds: [
+                    {
+                        _id: "21",
+                        name: "myClass1",
+                        assoc: "23",
+                        lowerBound: 1
+                    }
+                ],
+                attributes: [
+                    {
+                        _id: "20",
+                        name: "attribute2",
+                        type: "6"
+                    },
+                    {
+                        _id: "19",
+                        name: "attribute1",
+                        type: "6"
+                    }
+                ]
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
+                _id: "16",
+                name: "Class1",
+                associationEnds: [
+                    {
+                        _id: "22",
+                        name: "myClass3",
+                        assoc: "23",
+                        lowerBound: 1
+                    }
+                ],
+                attributes: [
+                    {
+                        _id: "18",
+                        name: "attribute1",
+                        type: "6"
+                    }
+                ]
+            }
+        ],
+        types: [
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDVoid",
+                _id: "1"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDAny",
+                _id: "2"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDBoolean",
+                _id: "3"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDDouble",
+                _id: "4"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDInt",
+                _id: "5"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDLong",
+                _id: "6"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDString",
+                _id: "7"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDByte",
+                _id: "8"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDFloat",
+                _id: "9"
+            },
+            {
+                eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDChar",
+                _id: "10"
+            }
+        ],
+        associations: [
+            {
+                _id: "23",
+                name: "Class3_Class1",
+                ends: [
+                    "21",
+                    "22"
+                ]
+            }
+        ],
+        layout: {
+            _id: "11",
+            containers: [
+                {
+                    _id: "12",
+                    key: "null",
+                    value: [
+                        {
+                            _id: "15",
+                            key: "14",
+                            value: {
+                                _id: "null",
+                                x: 200.0,
+                                y: 200.0
+                            }
+                        },
+                        {
+                            _id: "17",
+                            key: "16",
+                            value: {
+                                _id: "null",
+                                x: 350.0,
+                                y: 370.0
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+}

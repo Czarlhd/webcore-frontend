@@ -66,26 +66,30 @@ function jsonToSVG(svg, json) {
 					attributes,
 					json.types
 				);
-
-				//TODO Create Associations
-				//"?." checks if association exists
-				if (json?.associations) {
-					json.associations.forEach((association) => {
-						if (association.name !== "_" + Class.name) return; //? This is to avoid creating creating an association from both classes between each other
-
-						var coordinates = values.find((value) => {
-							return value.key === association._id;
-						}).value; //Coordinates of the association
-						createAssociation(
-							svg,
-							Class._id,
-							association._id,
-							coordinates.x,
-							coordinates.y
-						);
-					});
-				}
 			});
+
+			//TODO Create Associations
+			//"?." checks if association exists
+			if (json?.associations) {
+				json.associations.forEach((association) => {
+
+					const classNames = association.name.split("_");
+					const className1 = classNames[0];
+					const className2 = classNames[1];
+					const end1 = association.ends[0];
+					const end2 = association.ends[1];
+
+					createAssociation(
+						svg,
+						className1,
+						className2,
+						end1,
+						end2,
+						json.classes,
+						values
+					);
+				});
+			}
 		}
 	}
 }
@@ -111,6 +115,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	g.setAttribute("transform", `translate(${x}, ${y})`);
 	g.setAttribute("name", name);
 	g.setAttribute("id", "class-" + classId); //? This is the id of the class
+	// g.setAttribute("pointer-events", "all");
 	svg.appendChild(g);
 
 	/**
@@ -231,7 +236,35 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	// g.appendChild(path4);
 }
 
-function createAssociation(svg, classId, associationId, x, y) {
-	//? Ask how to get lines because we only have the start coordinates of the association and what is dashed line
-	// console.log(svg.getElementById("class-" + classId));
+function createAssociation(svg, className1, className2, end1, end2, classes, coordinates) {
+
+	const class1 = classes.find((Class) => { return Class.name === className1 });
+	const class1Id = class1._id;
+	const coord1 = coordinates.find((coord) => { return coord.key === class1Id }).value;
+
+	const class2 = classes.find((Class) => { return Class.name === className2 });
+	const class2Id = class2._id;
+	const coord2 = coordinates.find((coord) => { return coord.key === class2Id }).value;
+
+	const newCoord = getAdjustedCoordinates(coord1.x, coord1.y, coord2.x, coord2.y);
+
+	let line = document.createElementNS(NS, "line");
+	line.setAttribute("x1", `${newCoord.x1}`);
+	line.setAttribute("y1", `${newCoord.y1}`);
+	line.setAttribute("x2", `${newCoord.x2}`);
+	line.setAttribute("y2", `${newCoord.y2}`);
+	line.setAttribute("stroke", "black");
+	line.setAttribute("strokeWidth", "2")
+	svg.appendChild(line)
+
+}
+
+function getAdjustedCoordinates(x1, y1, x2, y2) {
+	let newX1 = x1;
+	let newY1 = y1 + 30 + 2*15;
+	let newX2 = x2;
+	let newY2 = y2 + 19 + 15;
+
+
+	return {x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
 }
