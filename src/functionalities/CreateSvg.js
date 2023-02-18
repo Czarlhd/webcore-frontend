@@ -1,10 +1,3 @@
-import {
-	ONE_CLASS,
-	TWO_CLASSES_WITH_ASSOCIATION,
-	TEST,
-	ONE_CLASS_ONE_ATTRIBUTE,
-} from "../assets/CDM_details";
-
 const NS = "http://www.w3.org/2000/svg";
 
 export default function CreateSvg(jsonSvg) {
@@ -72,7 +65,6 @@ function jsonToSVG(svg, json) {
 			//"?." checks if association exists
 			if (json?.associations) {
 				json.associations.forEach((association) => {
-
 					const classNames = association.name.split("_");
 					const className1 = classNames[0];
 					const className2 = classNames[1];
@@ -206,17 +198,6 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 			);
 			attributeName.appendChild(attributeText);
 		});
-
-		// let attributeNam = document.createElementNS(NS, "text");
-		// attributeNam.setAttribute("id", "attribute-" + 11);
-		// attributeNam.setAttribute("x", "5.5");
-		// attributeNam.setAttribute("y", "55");
-		// gPath.appendChild(attributeNam);
-
-		// var attributeText2 = document.createTextNode(
-		// 	"int" + attributes[0].name
-		// );
-		// attributeNam.appendChild(attributeText2);
 	}
 
 	/**
@@ -236,17 +217,41 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	// g.appendChild(path4);
 }
 
-function createAssociation(svg, className1, className2, end1, end2, classes, coordinates) {
-
-	const class1 = classes.find((Class) => { return Class.name === className1 });
+function createAssociation(
+	svg,
+	className1,
+	className2,
+	end1,
+	end2,
+	classes,
+	coordinates
+) {
+	const class1 = classes.find((Class) => {
+		return Class.name === className1;
+	});
 	const class1Id = class1._id;
-	const coord1 = coordinates.find((coord) => { return coord.key === class1Id }).value;
+	const coord1 = coordinates.find((coord) => {
+		return coord.key === class1Id;
+	}).value;
 
-	const class2 = classes.find((Class) => { return Class.name === className2 });
+	const class2 = classes.find((Class) => {
+		return Class.name === className2;
+	});
 	const class2Id = class2._id;
-	const coord2 = coordinates.find((coord) => { return coord.key === class2Id }).value;
+	const coord2 = coordinates.find((coord) => {
+		return coord.key === class2Id;
+	}).value;
 
-	const newCoord = getAdjustedCoordinates(coord1.x, coord1.y, coord2.x, coord2.y);
+	const newCoord = getAdjustedCoordinates(
+		coord1.x,
+		coord1.y,
+		coord2.x,
+		coord2.y,
+		class1.attributes.length,
+		class2.attributes.length
+	);
+
+	console.log(newCoord);
 
 	let line = document.createElementNS(NS, "line");
 	line.setAttribute("x1", `${newCoord.x1}`);
@@ -254,17 +259,113 @@ function createAssociation(svg, className1, className2, end1, end2, classes, coo
 	line.setAttribute("x2", `${newCoord.x2}`);
 	line.setAttribute("y2", `${newCoord.y2}`);
 	line.setAttribute("stroke", "black");
-	line.setAttribute("strokeWidth", "2")
-	svg.appendChild(line)
-
+	line.setAttribute("strokeWidth", "2");
+	svg.appendChild(line);
 }
 
-function getAdjustedCoordinates(x1, y1, x2, y2) {
+function getAdjustedCoordinates(x1, y1, x2, y2, numOfAtt1, numOfAtt2) {
 	let newX1 = x1;
-	let newY1 = y1 + 30 + 2*15;
+	let newY1 = y1;
 	let newX2 = x2;
-	let newY2 = y2 + 19 + 15;
+	let newY2 = y2;
 
+	let corners1 = {
+		c1: { x: x1, y: y1 },
+		c2: { x: x1 + 160, y: y1 },
+		c3: { x: x1, y: y1 + (30 + numOfAtt1 * 15) },
+		c4: { x: x1 + 160, y: y1 + 30 * numOfAtt1 * 15 },
+	};
+	let corners2 = {
+		c1: { x: x2, y: y2 },
+		c2: { x: x2 + 160, y: y2 },
+		c3: { x: x2, y: y2 + (30 + numOfAtt2 * 15) },
+		c4: { x: x2 + 160, y: y2 + 30 * numOfAtt2 * 15 },
+	};
 
-	return {x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+	/**
+	 *  Top1 = (x+5, y)
+	 *  Top2 = (x+80, y)
+	 *  Top3 = (x+119, y)
+	 *
+	 *  Left1 = (x, y+5)
+	 * 	Left2 = (x, y + (30 + attributes.length * 15) / 2)
+	 * 	Left3 = (x, y + (30 + attributes.length * 15) - 5)
+	 *
+	 * 	Right1 = (x+160, y+5)
+	 * 	Right2 = (x+160, y + (30 + attributes.length * 15) / 2)
+	 *  Right3 = (x+160, y + (30 + attributes.length * 15) - 5)
+	 *
+	 *  Bottom1 = (x+5, y + (30 + attributes.length * 15))
+	 *  Bottom2 = (x+80, y + (30 + attributes.length * 15))
+	 *  Bottom3 = (x+119, y + (30 + attributes.length * 15))
+	 */
+
+	/**
+	 * Calculate the new coordinates for the association
+	 * If the first class has a smaller x value than the second class
+	 */
+	if (x1 < x2) {
+		//Right 2 (middle) for first class
+		newX1 = x1 + 160;
+		newY1 = y1 + (30 + numOfAtt1 * 15) / 2;
+
+		//Left 2 (middle) for second class
+		newX2 = x2;
+		newY2 = y2 + (30 + numOfAtt2 * 15) / 2;
+	} else {
+		//Left 2 (middle) for first class
+		newX1 = x1;
+		newY1 = y1 + (30 + numOfAtt1 * 15) / 2;
+
+		//Right 2 (middle) for second class
+		newX2 = x2 + 160;
+		newY2 = y2 + (30 + numOfAtt2 * 15) / 2;
+	}
+
+	/**
+	 * Check if x of the second class has is between the x of the corners of the first class
+	 *
+	 */
+	if (x2 >= x1 && x2 <= corners1.c2.x) {
+		if (y2 >= y1) {
+			//Bottom 2 (middle) for first class
+			newX1 = x1 + 80;
+			newY1 = y1 + (30 + numOfAtt1 * 15);
+
+			//Top 2 (middle) for second class
+			newX2 = x2 + 80;
+			newY2 = y2;
+		} else {
+			//opposite
+			//Top 2 (middle) for first class
+			newX1 = x1 + 80;
+			newY1 = y1;
+
+			//Bottom 2 (middle) for second class
+			newX2 = x2 + 80;
+			newY2 = y2 + (30 + numOfAtt2 * 15);
+		}
+	} else if (x2 >= corners1.c3.x && x2 <= corners1.c4.x) {
+		//opposite
+		if (y2 >= y1) {
+			//Bottom 2 (middle) for first class
+			newX1 = x1 + 80;
+			newY1 = y1 + (30 + numOfAtt1 * 15);
+
+			//Top 2 (middle) for second class
+			newX2 = x2 + 80;
+			newY2 = y2;
+		} else {
+			//opposite
+			//Top 2 (middle) for first class
+			newX1 = x1 + 80;
+			newY1 = y1;
+
+			//Bottom 2 (middle) for second class
+			newX2 = x2 + 80;
+			newY2 = y2 + (30 + numOfAtt2 * 15);
+		}
+	}
+
+	return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
 }
