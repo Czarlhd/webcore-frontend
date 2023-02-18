@@ -283,6 +283,9 @@ function getAdjustedCoordinates(x1, y1, x2, y2, numOfAtt1, numOfAtt2) {
 	};
 
 	/**
+	 * 	These are the diff points where a line can connect to the class
+	 *  To make it easier and add the line to predermined classes
+	 *
 	 *  Top1 = (x+5, y)
 	 *  Top2 = (x+80, y)
 	 *  Top3 = (x+119, y)
