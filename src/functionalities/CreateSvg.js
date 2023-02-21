@@ -177,7 +177,7 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 		let gPath = document.createElementNS(NS, "g");
 		gPath.setAttribute("fill", "rgb(0, 0, 0)");
 		gPath.setAttribute("font-family", "Helvetica");
-		gPath.setAttribute("pointer-events", "all");
+		// gPath.setAttribute("pointer-events", "all");
 		gPath.setAttribute("font-size", "12");
 		g.appendChild(gPath);
 
@@ -191,6 +191,8 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 			attributeName.setAttribute("id", "attribute-" + attribute._id);
 			attributeName.setAttribute("x", "5.5");
 			attributeName.setAttribute("y", `${y}`);
+			attributeName.setAttribute("editable", "true");
+			attributeName.setAttribute("pointer-events", "all");
 			gPath.appendChild(attributeName);
 
 			var attributeText = document.createTextNode(
@@ -250,8 +252,6 @@ function createAssociation(
 		class1.attributes.length,
 		class2.attributes.length
 	);
-
-	console.log(newCoord);
 
 	let line = document.createElementNS(NS, "line");
 	line.setAttribute("x1", `${newCoord.x1}`);

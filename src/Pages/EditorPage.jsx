@@ -8,6 +8,8 @@ import {
 	deleteClass,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
+import Modal from "./Modal";
+import AddAttributeModal from "./AddAttributeModal";
 
 export default function EditorPage() {
 	const [classId, setClassId] = useState("");
@@ -38,13 +40,17 @@ export default function EditorPage() {
 
 	function svgOnClick(e) {
 		const elId = e.target.id;
-		if (elId.includes("className")) setClassId(elId);
+		if (elId.includes("className")) {
+			setClassId(elId);
+			setShowModal(true);
+			setMousePosition({ x: e.clientX, y: e.clientY });
+		}
 		if (elId.includes("attribute")) setAttributeId(elId);
 
 		var el = document.getElementById(elId);
 		// const highlight = el.getElementsByTagName("path");
-		console.log("element", el);
-		console.log("x, y", e.clientX, e.clientY);
+		// console.log("element", el);
+		// console.log("x, y", e.clientX, e.clientY);
 
 		let className = null;
 
@@ -93,9 +99,8 @@ export default function EditorPage() {
 		}
 	}
 
-	async function addAttributeButton() {
-		let newAttributeName =
-			document.getElementById("newAttributeName").value;
+	async function addAttributeButton(attributeName) {
+		let newAttributeName = attributeName;
 		let typeId = document.getElementById("typeSelect").value;
 		const foundClass = jsonSvgRes["classes"].find((Class) => {
 			return Class._id === classId.split("-")[1];
@@ -126,8 +131,51 @@ export default function EditorPage() {
 		let numOfAtt = foundClass?.attributes?.length;
 	}
 
+	const [showModal, setShowModal] = useState(false);
+	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+	const handleModalClose = () => {
+		setShowModal(false);
+	};
+
+	const handleOptionSelect = (option) => {
+		if (option === "Delete Class") {
+			removeClass();
+		} else if (option === "Add Attribute") {
+			setAttShowModal(true);
+		}
+	};
+
+	const [showAttModal, setAttShowModal] = useState(false);
+	const [attributeName, setAttributeName] = useState("");
+
+	const handleAttModalClose = () => {
+		addAttributeButton(attributeName);
+		setAttShowModal(false);
+		setShowModal(false);
+	};
+
 	return (
 		<div className="container-fluid">
+			{showModal && (
+				<Modal
+					show={showModal}
+					options={["Add Attribute", "Delete Class"]}
+					onOptionSelect={handleOptionSelect}
+					onClose={handleModalClose}
+					position={mousePosition}
+				/>
+			)}
+			{showAttModal && (
+				<AddAttributeModal
+					show={showModal}
+					types={types}
+					addAttributeButton={handleAttModalClose}
+					position={mousePosition}
+					setAttributeName={setAttributeName}
+					attributeName={attributeName}
+				/>
+			)}
 			<div className="row">
 				<div className="action-container">
 					<div
@@ -169,37 +217,6 @@ export default function EditorPage() {
 							</div>
 						</div>
 						<div>
-							<div>Add new Attribute:</div>
-							<input
-								id="newAttributeName"
-								type="text"
-								placeholder="Attribute Name"
-							/>
-							<div>
-								<div>Select Type</div>
-								<select
-									id="typeSelect"
-									style={{ width: "70px" }}
-								>
-									{types.map((el) => {
-										return (
-											<option value={el._id} key={el._id}>
-												{el.eClass}
-											</option>
-										);
-									})}
-								</select>
-							</div>
-							<div>
-								<button
-									id="newAttributeButton"
-									onClick={addAttributeButton}
-								>
-									Add Attribute
-								</button>
-							</div>
-						</div>
-						<div>
 							<div>Update Attribute:</div>
 							<input
 								id="updatedAttributeName"
@@ -229,12 +246,6 @@ export default function EditorPage() {
 									Update Attribute
 								</button>
 							</div>
-						</div>
-						<div>
-							<div>Delete selected shape:</div>
-							<button id="deleteButton" onClick={removeClass}>
-								Delete
-							</button>
 						</div>
 					</div>
 				</div>
