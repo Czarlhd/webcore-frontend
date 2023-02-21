@@ -9,7 +9,7 @@ import {
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
-import AddAttributeModal from "./AddAttributeModal";
+import AttributeModal from "./AttributeModal";
 
 export default function EditorPage() {
 	const [classId, setClassId] = useState("");
@@ -44,21 +44,27 @@ export default function EditorPage() {
 			setClassId(elId);
 			setShowModal(true);
 			setMousePosition({ x: e.clientX, y: e.clientY });
+
+			//Set Other modals to false so that they close
+			setAttShowModal(false);
+			setUpdateAttShowModal(false);
 		}
-		if (elId.includes("attribute")) setAttributeId(elId);
+		if (elId.includes("attribute")) {
+			setAttributeId(elId);
+			setMousePosition({ x: e.clientX, y: e.clientY });
+			setUpdateAttShowModal(true);
+
+			//Set Other modals to false so that they close
+			setShowModal(false);
+			setAttShowModal(false);
+		}
 
 		var el = document.getElementById(elId);
-		// const highlight = el.getElementsByTagName("path");
-		// console.log("element", el);
-		// console.log("x, y", e.clientX, e.clientY);
 
 		let className = null;
 
 		if (el && elId.includes("className-")) {
 			className = el.textContent;
-			// for (let i = 0; i < highlight.length; i++) {
-			// 	highlight[i].setAttribute("stroke", "rgb(255,255,0)");
-			// }
 		}
 		if (className)
 			document.getElementById("selected-shape").textContent =
@@ -120,10 +126,10 @@ export default function EditorPage() {
 		}
 	}
 
-	function updateAttributeButton() {
+	function updateAttributeButton(attributeName) {
 		console.log("Update Attribute Button Clicked");
-		let newAttributeName =
-			document.getElementById("newAttributeName").value;
+		let newAttributeName = attributeName;
+		// document.getElementById("newAttributeName").value;
 		let typeId = document.getElementById("typeSelect").value;
 		const foundClass = jsonSvgRes["classes"].find((Class) => {
 			return Class._id === classId.split("-")[1];
@@ -135,6 +141,7 @@ export default function EditorPage() {
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
 	const handleModalClose = () => {
+		setAttShowModal(false);
 		setShowModal(false);
 	};
 
@@ -153,6 +160,16 @@ export default function EditorPage() {
 		addAttributeButton(attributeName);
 		setAttShowModal(false);
 		setShowModal(false);
+		setAttributeName("");
+	};
+
+	const [showUpdateAttModal, setUpdateAttShowModal] = useState(false);
+	const [updatedAttributeName, setUpdatedAttributeName] = useState("");
+
+	const handleUpdateAttModalClose = () => {
+		updateAttributeButton(attributeName);
+		setUpdateAttShowModal(false);
+		setUpdatedAttributeName("");
 	};
 
 	return (
@@ -167,13 +184,29 @@ export default function EditorPage() {
 				/>
 			)}
 			{showAttModal && (
-				<AddAttributeModal
+				<AttributeModal
 					show={showModal}
 					types={types}
 					addAttributeButton={handleAttModalClose}
 					position={mousePosition}
 					setAttributeName={setAttributeName}
 					attributeName={attributeName}
+					buttonName={"Add"}
+					selectedAttribute={""}
+				/>
+			)}
+			{showUpdateAttModal && (
+				<AttributeModal
+					show={showModal}
+					types={types}
+					addAttributeButton={handleUpdateAttModalClose}
+					position={mousePosition}
+					setAttributeName={setUpdatedAttributeName}
+					attributeName={updatedAttributeName}
+					buttonName={"Update"}
+					selectedAttribute={
+						document.getElementById(attributesId).textContent
+					}
 				/>
 			)}
 			<div className="row">
@@ -213,37 +246,6 @@ export default function EditorPage() {
 									id="newclassNameButton"
 								>
 									Change Class Name
-								</button>
-							</div>
-						</div>
-						<div>
-							<div>Update Attribute:</div>
-							<input
-								id="updatedAttributeName"
-								type="text"
-								placeholder="New Attribute Name"
-							/>
-							<div>
-								<div>Select Type</div>
-								<select
-									id="typeSelect"
-									style={{ width: "70px" }}
-								>
-									{types.map((el) => {
-										return (
-											<option value={el._id} key={el._id}>
-												{el.eClass}
-											</option>
-										);
-									})}
-								</select>
-							</div>
-							<div>
-								<button
-									id="updateAttributeButton"
-									onClick={updateAttributeButton}
-								>
-									Update Attribute
 								</button>
 							</div>
 						</div>
