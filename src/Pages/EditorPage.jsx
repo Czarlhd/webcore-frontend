@@ -6,10 +6,13 @@ import {
 	getDiagram,
 	addAttribute,
 	deleteClass,
+	createClass,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
 import AttributeModal from "./AttributeModal";
+import RightClickModal from "./RightClickModal";
+import CreateClassModal from "./CreateClassModal";
 
 export default function EditorPage() {
 	const [classId, setClassId] = useState("");
@@ -39,6 +42,8 @@ export default function EditorPage() {
 	}, [jsonSvgRes]);
 
 	function svgOnClick(e) {
+		console.log("x: " + e.clientX + " y: " + e.clientY);
+
 		const elId = e.target.id;
 		if (elId.includes("className")) {
 			setClassId(elId);
@@ -48,6 +53,8 @@ export default function EditorPage() {
 			//Set Other modals to false so that they close
 			setAttShowModal(false);
 			setUpdateAttShowModal(false);
+			setRightClickMenu(false);
+			setCreateClassModal(false);
 		}
 		if (elId.includes("attribute")) {
 			setAttributeId(elId);
@@ -57,6 +64,8 @@ export default function EditorPage() {
 			//Set Other modals to false so that they close
 			setShowModal(false);
 			setAttShowModal(false);
+			setRightClickMenu(false);
+			setCreateClassModal(false);
 		}
 
 		var el = document.getElementById(elId);
@@ -105,6 +114,22 @@ export default function EditorPage() {
 		}
 	}
 
+	async function createClassButton(className, dataType, isInterface, x, y) {
+		if (userToken !== "") {
+			await createClass(
+				userToken,
+				className,
+				dataType,
+				isInterface,
+				x,
+				y
+			);
+			getDiagramButton();
+		} else {
+			console.log("Please Log In First");
+		}
+	}
+
 	async function addAttributeButton(attributeName) {
 		let newAttributeName = attributeName;
 		let typeId = document.getElementById("typeSelect").value;
@@ -143,6 +168,9 @@ export default function EditorPage() {
 	const handleModalClose = () => {
 		setAttShowModal(false);
 		setShowModal(false);
+		setUpdateAttShowModal(false);
+		setRightClickMenu(false);
+		setCreateClassModal(false);
 	};
 
 	const handleOptionSelect = (option) => {
@@ -150,6 +178,8 @@ export default function EditorPage() {
 			removeClass();
 		} else if (option === "Add Attribute") {
 			setAttShowModal(true);
+		} else if (option === "Create Class") {
+			setCreateClassModal(true);
 		}
 	};
 
@@ -172,6 +202,30 @@ export default function EditorPage() {
 		setUpdatedAttributeName("");
 	};
 
+	const [showRightClickMenu, setRightClickMenu] = useState(false);
+
+	document.addEventListener("contextmenu", (event) => {
+		if (event.target.id === "classDiagram") {
+			event.preventDefault();
+
+			//Set Other modals to false so that they close
+			setRightClickMenu(true);
+			setAttShowModal(false);
+			setShowModal(false);
+			setUpdateAttShowModal(false);
+			setCreateClassModal(false);
+
+			console.log("event.clientX: " + event.clientX);
+			console.log("event.clientY: " + event.clientY);
+
+			setMousePosition({ x: event.clientX, y: event.clientY });
+		} else {
+			console.log("Right Clicked Else");
+		}
+	});
+
+	const [showCreateClassModal, setCreateClassModal] = useState(false);
+
 	return (
 		<div className="container-fluid">
 			{showModal && (
@@ -193,6 +247,7 @@ export default function EditorPage() {
 					attributeName={attributeName}
 					buttonName={"Add"}
 					selectedAttribute={""}
+					handleCloseClick={handleModalClose}
 				/>
 			)}
 			{showUpdateAttModal && (
@@ -207,6 +262,23 @@ export default function EditorPage() {
 					selectedAttribute={
 						document.getElementById(attributesId).textContent
 					}
+					handleCloseClick={handleModalClose}
+				/>
+			)}
+			{showRightClickMenu && (
+				<RightClickModal
+					show={showRightClickMenu}
+					position={mousePosition}
+					handleCloseClick={handleModalClose}
+					options={["Create Class"]}
+					onOptionSelect={handleOptionSelect}
+				/>
+			)}
+			{showCreateClassModal && (
+				<CreateClassModal
+					createClassButton={createClassButton}
+					handleCloseClick={handleModalClose}
+					position={mousePosition}
 				/>
 			)}
 			<div className="row">
@@ -255,7 +327,7 @@ export default function EditorPage() {
 					{/* <MakeDraggable svgOnClick={svgOnClick} id="class-1" svg={svg} /> */}
 					<div className="m-2 p-2 bg-light border">
 						<p>Class Editor: </p>
-						<div onClick={svgOnClick} ref={svg} />
+						<div onClick={svgOnClick} ref={svg} id="class-editor" />
 					</div>
 				</div>
 			</div>

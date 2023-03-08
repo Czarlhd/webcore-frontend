@@ -94,6 +94,7 @@ function createSvg() {
 	svg.setAttribute("width", "100%");
 	svg.setAttribute("height", "600");
 	svg.setAttribute("viewBox", "-0.5 -0.5 950 500");
+	svg.setAttribute("id", "classDiagram");
 	svg.style.backgroundColor = "grey";
 	// document.body.appendChild(svg);
 	return svg;

@@ -8,14 +8,13 @@ export default function AttributeModal({
 	attributeName,
 	buttonName,
 	selectedAttribute,
+	handleCloseClick,
 }) {
 	const { x, y } = position;
 	const modalStyle = {
 		top: buttonName === "Add" ? y : y + 10,
 		left: buttonName === "Add" ? x + 200 : x - 60,
 	};
-
-	console.log("AttributeModal: ", selectedAttribute);
 
 	return (
 		<div
@@ -30,6 +29,9 @@ export default function AttributeModal({
 				...modalStyle,
 			}}
 		>
+			<span className="close" onClick={handleCloseClick}>
+				&times;
+			</span>
 			<div>
 				{buttonName} Attribute:{" "}
 				<span style={{ fontWeight: "bold" }}>

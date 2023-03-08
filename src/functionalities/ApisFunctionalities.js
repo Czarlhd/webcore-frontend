@@ -100,3 +100,26 @@ export const deleteClass = async (userToken, classId) => {
 			console.log(err);
 		});
 };
+
+export const createClass = async (
+	userToken,
+	className,
+	dataType,
+	isInterface,
+	x,
+	y
+) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	const body = {
+		className: className,
+		dataType: dataType,
+		isInterface: isInterface,
+		x: x,
+		y: y,
+	};
+
+	return await axios.post(API_URL + `yasmina/classdiagram/TEST/class`, body, {
+		headers: headers,
+	});
+};
