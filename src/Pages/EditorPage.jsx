@@ -7,12 +7,16 @@ import {
 	addAttribute,
 	deleteClass,
 	createClass,
+	createEnumeration,
+	changeAbstraction,
+	updateAttribute,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
 import AttributeModal from "./AttributeModal";
 import RightClickModal from "./RightClickModal";
 import CreateClassModal from "./CreateClassModal";
+import CreateEnumModal from "./CreateEnumModal";
 
 export default function EditorPage() {
 	const [classId, setClassId] = useState("");
@@ -42,8 +46,6 @@ export default function EditorPage() {
 	}, [jsonSvgRes]);
 
 	function svgOnClick(e) {
-		console.log("x: " + e.clientX + " y: " + e.clientY);
-
 		const elId = e.target.id;
 		if (elId.includes("className")) {
 			setClassId(elId);
@@ -55,6 +57,7 @@ export default function EditorPage() {
 			setUpdateAttShowModal(false);
 			setRightClickMenu(false);
 			setCreateClassModal(false);
+			setShowEnumModal(false);
 		}
 		if (elId.includes("attribute")) {
 			setAttributeId(elId);
@@ -66,6 +69,7 @@ export default function EditorPage() {
 			setAttShowModal(false);
 			setRightClickMenu(false);
 			setCreateClassModal(false);
+			setShowEnumModal(false);
 		}
 
 		var el = document.getElementById(elId);
@@ -114,7 +118,14 @@ export default function EditorPage() {
 		}
 	}
 
-	async function createClassButton(className, dataType, isInterface, x, y) {
+	async function createClassButton(
+		className,
+		dataType,
+		isInterface,
+		x,
+		y,
+		isAbstract
+	) {
 		if (userToken !== "") {
 			await createClass(
 				userToken,
@@ -124,6 +135,19 @@ export default function EditorPage() {
 				x,
 				y
 			);
+
+			if (isAbstract) {
+				const newJson = await getDiagram(userToken);
+
+				const foundClass = newJson.classDiagram["classes"].find(
+					(Class) => {
+						return Class.name === className;
+					}
+				);
+
+				await changeAbstraction(userToken, foundClass._id);
+			}
+
 			getDiagramButton();
 		} else {
 			console.log("Please Log In First");
@@ -138,6 +162,7 @@ export default function EditorPage() {
 		});
 		let numOfAtt = foundClass?.attributes?.length;
 		if (userToken !== "") {
+			console.log("Add Attribute Button Clicked");
 			await addAttribute(
 				userToken,
 				classId.split("-")[1],
@@ -154,12 +179,23 @@ export default function EditorPage() {
 	function updateAttributeButton(attributeName) {
 		console.log("Update Attribute Button Clicked");
 		let newAttributeName = attributeName;
-		// document.getElementById("newAttributeName").value;
-		let typeId = document.getElementById("typeSelect").value;
-		const foundClass = jsonSvgRes["classes"].find((Class) => {
-			return Class._id === classId.split("-")[1];
-		});
-		let numOfAtt = foundClass?.attributes?.length;
+
+		// let typeId = document.getElementById("typeSelect").value;
+		// const foundClass = jsonSvgRes["classes"].find((Class) => {
+		// 	return Class._id === classId.split("-")[1];
+		// });
+		// let numOfAtt = foundClass?.attributes?.length;
+
+		if (userToken !== "") {
+			console.log(
+				updateAttribute(
+					userToken,
+					newAttributeName,
+					attributesId.split("-")[1]
+				)
+			);
+			getDiagramButton();
+		}
 	}
 
 	const [showModal, setShowModal] = useState(false);
@@ -171,6 +207,7 @@ export default function EditorPage() {
 		setUpdateAttShowModal(false);
 		setRightClickMenu(false);
 		setCreateClassModal(false);
+		setShowEnumModal(false);
 	};
 
 	const handleOptionSelect = (option) => {
@@ -179,7 +216,11 @@ export default function EditorPage() {
 		} else if (option === "Add Attribute") {
 			setAttShowModal(true);
 		} else if (option === "Create Class") {
+			setShowEnumModal(false);
 			setCreateClassModal(true);
+		} else if (option === "Create Enumeration") {
+			setCreateClassModal(false);
+			setShowEnumModal(true);
 		}
 	};
 
@@ -190,6 +231,7 @@ export default function EditorPage() {
 		addAttributeButton(attributeName);
 		setAttShowModal(false);
 		setShowModal(false);
+		setShowEnumModal(false);
 		setAttributeName("");
 	};
 
@@ -215,9 +257,6 @@ export default function EditorPage() {
 			setUpdateAttShowModal(false);
 			setCreateClassModal(false);
 
-			console.log("event.clientX: " + event.clientX);
-			console.log("event.clientY: " + event.clientY);
-
 			setMousePosition({ x: event.clientX, y: event.clientY });
 		} else {
 			console.log("Right Clicked Else");
@@ -225,6 +264,17 @@ export default function EditorPage() {
 	});
 
 	const [showCreateClassModal, setCreateClassModal] = useState(false);
+
+	const [showEnumModal, setShowEnumModal] = useState(false);
+
+	async function createEnumButton(enumName, x, y) {
+		if (userToken !== "") {
+			await createEnumeration(userToken, enumName, x, y);
+			getDiagramButton();
+		} else {
+			console.log("Please Log In First");
+		}
+	}
 
 	return (
 		<div className="container-fluid">
@@ -270,13 +320,20 @@ export default function EditorPage() {
 					show={showRightClickMenu}
 					position={mousePosition}
 					handleCloseClick={handleModalClose}
-					options={["Create Class"]}
+					options={["Create Class", "Create Enumeration"]}
 					onOptionSelect={handleOptionSelect}
 				/>
 			)}
 			{showCreateClassModal && (
 				<CreateClassModal
 					createClassButton={createClassButton}
+					handleCloseClick={handleModalClose}
+					position={mousePosition}
+				/>
+			)}
+			{showEnumModal && (
+				<CreateEnumModal
+					createEnumButton={createEnumButton}
 					handleCloseClick={handleModalClose}
 					position={mousePosition}
 				/>

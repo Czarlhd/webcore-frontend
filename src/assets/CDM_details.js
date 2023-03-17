@@ -417,6 +417,7 @@ export const ONE_ASSOCIATION = {
 			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//Class",
 			_id: "14",
 			name: "Class1",
+			abstract: true,
 			associationEnds: [
 				{
 					_id: "21",
@@ -526,6 +527,16 @@ export const ONE_ASSOCIATION = {
 			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDChar",
 			_id: "10",
 		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDEnum",
+			_id: "29",
+			name: "SecondEnum",
+		},
+		{
+			eClass: "http://cs.mcgill.ca/sel/cdm/1.0#//CDEnum",
+			_id: "30",
+			name: "FirstEnum",
+		},
 	],
 	associations: [
 		{
@@ -571,6 +582,24 @@ export const ONE_ASSOCIATION = {
 							_id: "null",
 							x: 356.0,
 							y: 473.0,
+						},
+					},
+					{
+						_id: "31",
+						key: "29",
+						value: {
+							_id: "null",
+							x: 100.0,
+							y: 300.0,
+						},
+					},
+					{
+						_id: "32",
+						key: "30",
+						value: {
+							_id: "null",
+							x: 100.0,
+							y: 300.0,
 						},
 					},
 				],

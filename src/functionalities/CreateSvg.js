@@ -57,7 +57,8 @@ function jsonToSVG(svg, json) {
 					coordinates.x,
 					coordinates.y,
 					attributes,
-					json.types
+					json.types,
+					Class?.abstract
 				);
 			});
 
@@ -83,6 +84,32 @@ function jsonToSVG(svg, json) {
 				});
 			}
 		}
+
+		//Create Enumerations
+		json.types.forEach((type) => {
+			if (type.eClass.split("CD")[1] === "Enum") {
+				var coordinates = values.find((value) => {
+					return value.key === type._id;
+				}).value;
+				createEnumeration(
+					svg,
+					type.name,
+					type._id,
+					coordinates.x,
+					coordinates.y,
+					[
+						//Test Array
+						{ name: "Monday" },
+						{ name: "Tuesday" },
+						{ name: "Wednesday" },
+						{ name: "Thursday" },
+						{ name: "Friday" },
+						{ name: "Saturday" },
+						{ name: "Sunday" },
+					]
+				);
+			}
+		});
 	}
 }
 
@@ -100,7 +127,16 @@ function createSvg() {
 	return svg;
 }
 
-function createClassBox(svg, name, classId, x, y, attributes, types) {
+function createClassBox(
+	svg,
+	name,
+	classId,
+	x,
+	y,
+	attributes,
+	types,
+	isAbstract
+) {
 	/**
 	 * Create SVG group
 	 */
@@ -116,7 +152,11 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	 */
 
 	let path1 = document.createElementNS(NS, "path");
-	path1.setAttribute("d", "M 0 26 L 0 0 L 160 0 L 160 26");
+	if (isAbstract) {
+		path1.setAttribute("d", "M 0 26 L 0 -20 L 160 -20 L 160 26");
+	} else {
+		path1.setAttribute("d", "M 0 26 L 0 0 L 160 0 L 160 26");
+	}
 	path1.setAttribute("fill", "rgb(255, 255, 255)");
 	path1.setAttribute("stroke", "rgb(0, 0, 0)");
 	path1.setAttribute("stroke-miterlimit", "10");
@@ -151,8 +191,25 @@ function createClassBox(svg, name, classId, x, y, attributes, types) {
 	className.setAttribute("pointer-events", "all");
 	g2.appendChild(className);
 
-	var textNode = document.createTextNode(name);
-	className.appendChild(textNode);
+	let textNode;
+	textNode = document.createTextNode(name);
+
+	if (isAbstract) {
+		let abstractTspan = document.createElementNS(NS, "tspan");
+		abstractTspan.setAttribute("x", "79.5");
+		abstractTspan.setAttribute("y", "-1");
+		abstractTspan.appendChild(document.createTextNode("«abstract»"));
+		className.appendChild(abstractTspan);
+
+		let nameTspan = document.createElementNS(NS, "tspan");
+		nameTspan.setAttribute("x", "79.5");
+		nameTspan.setAttribute("dy", "20");
+		nameTspan.setAttribute("id", "className-" + classId);
+		nameTspan.appendChild(textNode);
+		className.appendChild(nameTspan);
+	} else {
+		className.appendChild(textNode);
+	}
 
 	/**
 	 * Create the attributes rectangle
@@ -372,4 +429,112 @@ function getAdjustedCoordinates(x1, y1, x2, y2, numOfAtt1, numOfAtt2) {
 	}
 
 	return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+}
+
+function createEnumeration(svg, name, enumId, x, y, literals) {
+	/**
+	 * Create SVG group
+	 */
+	let g = document.createElementNS(NS, "g");
+	g.setAttribute("transform", `translate(${x}, ${y})`);
+	g.setAttribute("name", name);
+	g.setAttribute("id", "class-" + enumId); //? This is the id of the class
+	// g.setAttribute("pointer-events", "all");
+	svg.appendChild(g);
+
+	/**
+	 * Create the class Name rectangle
+	 */
+
+	let path1 = document.createElementNS(NS, "path");
+	path1.setAttribute("d", "M 0 26 L 0 -20 L 160 -20 L 160 26");
+	path1.setAttribute("fill", "rgb(255, 255, 255)");
+	path1.setAttribute("stroke", "rgb(0, 0, 0)");
+	path1.setAttribute("stroke-miterlimit", "10");
+	path1.setAttribute("pointer-events", "none");
+	g.appendChild(path1);
+
+	let path3 = document.createElementNS(NS, "path");
+	path3.setAttribute("d", "M 0 26 L 160 26");
+	path3.setAttribute("fill", "none");
+	path3.setAttribute("stroke", "rgb(0, 0, 0)");
+	path3.setAttribute("stroke-miterlimit", "10");
+	path3.setAttribute("pointer-events", "none");
+	g.appendChild(path3);
+
+	/**
+	 * Create the class name text box for the first rectangle
+	 */
+
+	let g2 = document.createElementNS(NS, "g");
+	g2.setAttribute("fill", "rgb(0, 0, 0)");
+	g2.setAttribute("font-family", "Helvetica");
+	g2.setAttribute("font-weight", "bold");
+	g2.setAttribute("pointer-events", "none");
+	g2.setAttribute("font-size", "12");
+	g2.setAttribute("text-anchor", "middle");
+	g.appendChild(g2);
+
+	let className = document.createElementNS(NS, "text");
+	className.setAttribute("id", "className-" + enumId);
+	className.setAttribute("x", "79.5");
+	className.setAttribute("y", "17.5");
+	className.setAttribute("pointer-events", "all");
+	g2.appendChild(className);
+
+	let abstractTspan = document.createElementNS(NS, "tspan");
+	abstractTspan.setAttribute("x", "79.5");
+	abstractTspan.setAttribute("y", "-1");
+	abstractTspan.appendChild(document.createTextNode("<<enumeration>>"));
+	className.appendChild(abstractTspan);
+
+	let nameTspan = document.createElementNS(NS, "tspan");
+	nameTspan.setAttribute("x", "79.5");
+	nameTspan.setAttribute("dy", "20");
+	nameTspan.setAttribute("id", "enumeration-" + enumId);
+	nameTspan.appendChild(document.createTextNode(name));
+	className.appendChild(nameTspan);
+
+	/**
+	 * Create the attributes rectangle
+	 */
+	const attributesBoxHeight = 30 + literals.length * 15;
+	let path2 = document.createElementNS(NS, "path");
+	path2.setAttribute(
+		"d",
+		`M 0 26 L 0 ${attributesBoxHeight} L 160 ${attributesBoxHeight} L 160 26`
+	); //Changes the enumaration rectangle height
+	path2.setAttribute("fill", "white");
+	path2.setAttribute("stroke", "rgb(0, 0, 0)");
+	path2.setAttribute("stroke-miterlimit", "10");
+	path2.setAttribute("pointer-events", "none");
+	g.appendChild(path2);
+
+	/**
+	 * TODO: Create attributes text box
+	 */
+
+	if (literals.length > 0) {
+		let gPath = document.createElementNS(NS, "g");
+		gPath.setAttribute("fill", "rgb(0, 0, 0)");
+		gPath.setAttribute("font-family", "Helvetica");
+		// gPath.setAttribute("pointer-events", "all");
+		gPath.setAttribute("font-size", "12");
+		g.appendChild(gPath);
+
+		literals.forEach((literal, index) => {
+			let y = 40 + index * 15;
+
+			let literalName = document.createElementNS(NS, "text");
+			literalName.setAttribute("id", "attribute-" + literal._id);
+			literalName.setAttribute("x", "5.5");
+			literalName.setAttribute("y", `${y}`);
+			literalName.setAttribute("editable", "true");
+			literalName.setAttribute("pointer-events", "all");
+			gPath.appendChild(literalName);
+
+			var literalText = document.createTextNode(`${literal.name}`);
+			literalName.appendChild(literalText);
+		});
+	}
 }

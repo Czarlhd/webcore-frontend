@@ -15,9 +15,19 @@ export default function CreateClassModal({
 	const [className, setClassName] = useState("");
 	const [dataType, setDataType] = useState(false);
 	const [isInterface, setIsInterface] = useState(false);
+	const [isAbstract, setIsAbstract] = useState(false);
 
+	//TODO X and Y need to change depending on the screensize (inspect open example) do the same for enumeration
 	const handleCreateClass = () => {
-		createClassButton(className, dataType, isInterface, x - 192, y - 141);
+		console.log("First abstract: ", isAbstract);
+		createClassButton(
+			className,
+			dataType,
+			isInterface,
+			x - 192,
+			y - 141,
+			isAbstract
+		);
 		handleCloseClick();
 	};
 
@@ -45,6 +55,16 @@ export default function CreateClassModal({
 				onChange={(e) => setClassName(e.target.value)}
 			/>
 			<div>
+				<span>Is Abstract</span>
+				<input
+					type="checkbox"
+					id="abstract"
+					name="abstract"
+					value="abstract"
+					onChange={(e) => setIsAbstract(e.target.checked)}
+				/>
+			</div>
+			{/* <div>
 				<span>Data Type</span>
 				<input
 					type="checkbox"
@@ -63,7 +83,7 @@ export default function CreateClassModal({
 					value="dataType"
 					onChange={(e) => setIsInterface(e.target.checked)}
 				/>
-			</div>
+			</div> */}
 			<div>
 				<button id="createClassButton" onClick={handleCreateClass}>
 					Create Class

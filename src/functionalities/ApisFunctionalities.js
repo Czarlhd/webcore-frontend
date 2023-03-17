@@ -123,3 +123,51 @@ export const createClass = async (
 		headers: headers,
 	});
 };
+
+export const createEnumeration = async (userToken, enumName, x, y) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	const body = {
+		enumName: enumName,
+		x: x,
+		y: y,
+	};
+
+	return await axios.post(API_URL + `yasmina/classdiagram/TEST/enum`, body, {
+		headers: headers,
+	});
+};
+
+export const changeAbstraction = async (userToken, classId) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	return await axios.put(
+		API_URL + `yasmina/classdiagram/TEST/class/${classId}/abstract`,
+		void 0,
+		{ headers: headers }
+	);
+};
+
+//TODO doesnt work error 500
+export const updateAttribute = async (userToken, newName, attributeId) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	const body = {
+		newName: newName,
+	};
+
+	return await axios
+		.put(
+			API_URL +
+				`yasmina/classdiagram/TEST/class/attribute/${attributeId}/rename`,
+			body,
+			{ headers: headers }
+		)
+		.then((res) => {
+			return res.data;
+		})
+		.catch((err) => {
+			console.log("err: " + err);
+			return err;
+		});
+};

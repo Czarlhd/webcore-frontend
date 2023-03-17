@@ -45,18 +45,20 @@ export default function AttributeModal({
 				value={attributeName}
 				onChange={(e) => setAttributeName(e.target.value)}
 			/>
-			<div>
-				<div>Select Type</div>
-				<select id="typeSelect" style={{ width: "70px" }}>
-					{types.map((el) => {
-						return (
-							<option value={el._id} key={el._id}>
-								{el.eClass}
-							</option>
-						);
-					})}
-				</select>
-			</div>
+			{buttonName === "Add" && (
+				<div>
+					<div>Select Type</div>
+					<select id="typeSelect" style={{ width: "70px" }}>
+						{types.map((el) => {
+							return (
+								<option value={el._id} key={el._id}>
+									{el.eClass}
+								</option>
+							);
+						})}
+					</select>
+				</div>
+			)}
 			<div>
 				<button id="newAttributeButton" onClick={addAttributeButton}>
 					{buttonName} Attribute
