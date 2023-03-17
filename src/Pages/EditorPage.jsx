@@ -10,6 +10,7 @@ import {
 	createEnumeration,
 	changeAbstraction,
 	updateAttribute,
+	createAssociation,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
@@ -17,6 +18,7 @@ import AttributeModal from "./AttributeModal";
 import RightClickModal from "./RightClickModal";
 import CreateClassModal from "./CreateClassModal";
 import CreateEnumModal from "./CreateEnumModal";
+import CreateAssociationModal from "./CreateAssociationModal";
 
 export default function EditorPage() {
 	const [classId, setClassId] = useState("");
@@ -208,6 +210,7 @@ export default function EditorPage() {
 		setRightClickMenu(false);
 		setCreateClassModal(false);
 		setShowEnumModal(false);
+		setCreateAssociationModal(false);
 	};
 
 	const handleOptionSelect = (option) => {
@@ -221,6 +224,9 @@ export default function EditorPage() {
 		} else if (option === "Create Enumeration") {
 			setCreateClassModal(false);
 			setShowEnumModal(true);
+		} else if (option === "Create Association") {
+			setAttShowModal(false);
+			setCreateAssociationModal(true);
 		}
 	};
 
@@ -276,12 +282,28 @@ export default function EditorPage() {
 		}
 	}
 
+	const [showCreateAssociationModal, setCreateAssociationModal] =
+		useState(false);
+
+	function createAssociationButton(fromClass, toClass, bidirectional) {
+		if (userToken !== "") {
+			createAssociation(userToken, fromClass, toClass, bidirectional);
+			getDiagramButton();
+		} else {
+			console.log("Please Log In First");
+		}
+	}
+
 	return (
 		<div className="container-fluid">
 			{showModal && (
 				<Modal
 					show={showModal}
-					options={["Add Attribute", "Delete Class"]}
+					options={[
+						"Add Attribute",
+						"Create Association",
+						"Delete Class",
+					]}
 					onOptionSelect={handleOptionSelect}
 					onClose={handleModalClose}
 					position={mousePosition}
@@ -336,6 +358,15 @@ export default function EditorPage() {
 					createEnumButton={createEnumButton}
 					handleCloseClick={handleModalClose}
 					position={mousePosition}
+				/>
+			)}
+			{showCreateAssociationModal && (
+				<CreateAssociationModal
+					position={mousePosition}
+					handleCloseClick={handleModalClose}
+					classes={jsonSvgRes["classes"]}
+					fromClassId={classId.split("-")[1]}
+					createAssociationButton={createAssociationButton}
 				/>
 			)}
 			<div className="row">

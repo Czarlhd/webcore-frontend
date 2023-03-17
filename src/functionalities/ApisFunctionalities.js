@@ -171,3 +171,29 @@ export const updateAttribute = async (userToken, newName, attributeId) => {
 			return err;
 		});
 };
+
+export const createAssociation = async (
+	userToken,
+	fromClassId,
+	toClassId,
+	bidirectional
+) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	const body = {
+		fromClassId: fromClassId,
+		toClassId: toClassId,
+		bidirectional: bidirectional,
+	};
+
+	return await axios
+		.post(API_URL + `yasmina/classdiagram/TEST/association`, body, {
+			headers: headers,
+		})
+		.then((response) => {
+			return response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};

@@ -307,8 +307,8 @@ function createAssociation(
 		coord1.y,
 		coord2.x,
 		coord2.y,
-		class1.attributes.length,
-		class2.attributes.length
+		class1.attributes?.length ? class1.attributes.length : 0,
+		class2.attributes?.length ? class2.attributes.length : 0
 	);
 
 	let line = document.createElementNS(NS, "line");
@@ -514,7 +514,7 @@ function createEnumeration(svg, name, enumId, x, y, literals) {
 	 * TODO: Create attributes text box
 	 */
 
-	if (literals.length > 0) {
+	if (literals?.length > 0) {
 		let gPath = document.createElementNS(NS, "g");
 		gPath.setAttribute("fill", "rgb(0, 0, 0)");
 		gPath.setAttribute("font-family", "Helvetica");
