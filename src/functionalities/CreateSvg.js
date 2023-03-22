@@ -123,7 +123,54 @@ function createSvg() {
 	svg.setAttribute("viewBox", "-0.5 -0.5 950 500");
 	svg.setAttribute("id", "classDiagram");
 	svg.style.backgroundColor = "grey";
-	// document.body.appendChild(svg);
+
+	let defs = document.createElementNS(NS, "defs");
+	svg.appendChild(defs);
+
+	let arrowMarkerEnd = document.createElementNS(NS, "marker");
+	arrowMarkerEnd.setAttribute("id", "arrowheadend");
+	arrowMarkerEnd.setAttribute("orient", "auto");
+	arrowMarkerEnd.setAttribute("markerWidth", "10");
+	arrowMarkerEnd.setAttribute("markerHeight", "7");
+	arrowMarkerEnd.setAttribute("refX", "10");
+	arrowMarkerEnd.setAttribute("refY", "3.5");
+
+	let arrowPolPoints = document.createElementNS(NS, "polygon");
+	arrowPolPoints.setAttribute("points", "0 0, 10 3.5, 0 7");
+
+	arrowMarkerEnd.appendChild(arrowPolPoints);
+	defs.appendChild(arrowMarkerEnd);
+
+	let arrowMarkerStart = document.createElementNS(NS, "marker");
+	arrowMarkerStart.setAttribute("id", "arrowheadstart");
+	arrowMarkerStart.setAttribute("orient", "auto");
+	arrowMarkerStart.setAttribute("markerWidth", "10");
+	arrowMarkerStart.setAttribute("markerHeight", "7");
+	arrowMarkerStart.setAttribute("refX", "0");
+	arrowMarkerStart.setAttribute("refY", "3.5");
+
+	let arrowPolPointsStart = document.createElementNS(NS, "polygon");
+	arrowPolPointsStart.setAttribute("points", "10 0, 10 7, 0 3.5");
+
+	arrowMarkerStart.appendChild(arrowPolPointsStart);
+	defs.appendChild(arrowMarkerStart);
+
+	let diamondMarker = document.createElementNS(NS, "marker");
+	diamondMarker.setAttribute("id", "diamond");
+	diamondMarker.setAttribute("orient", "auto-start-reverse");
+	diamondMarker.setAttribute("viewBox", "0 0 20 10");
+	diamondMarker.setAttribute("markerWidth", "16");
+	diamondMarker.setAttribute("markerHeight", "8");
+	diamondMarker.setAttribute("refX", "20");
+	diamondMarker.setAttribute("refY", "5");
+
+	let diamondPath = document.createElementNS(NS, "path");
+	diamondPath.setAttribute("d", "M 10 0 L 20 5 L 10 10 L 0 5 Z");
+	diamondPath.setAttribute("fill", "black");
+
+	diamondMarker.appendChild(diamondPath);
+	defs.appendChild(diamondMarker);
+
 	return svg;
 }
 
@@ -318,6 +365,9 @@ function createAssociation(
 	line.setAttribute("y2", `${newCoord.y2}`);
 	line.setAttribute("stroke", "black");
 	line.setAttribute("strokeWidth", "2");
+	// line.setAttribute("marker-end", "url(#diamond)");
+	line.setAttribute("marker-end", "url(#arrowheadend)");
+	line.setAttribute("marker-start", "url(#arrowheadstart)"); //TODO change the way the arrow points
 	svg.appendChild(line);
 }
 
