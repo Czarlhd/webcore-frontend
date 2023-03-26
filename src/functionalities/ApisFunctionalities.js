@@ -197,3 +197,27 @@ export const createAssociation = async (
 			console.log(err);
 		});
 };
+
+export const moveClass = async (userToken, classId, x, y) => {
+	headers.Authorization = "Bearer " + userToken;
+
+	var map = new Map([[parseInt(classId), { x: x, y: y }]]);
+	var obj = Object.fromEntries(map);
+
+	const body = {
+		positionMap: obj,
+	};
+
+	console.log(body);
+
+	return await axios
+		.put(API_URL + `yasmina/classdiagram/TEST/moveClassifiers`, body, {
+			headers: headers,
+		})
+		.then((response) => {
+			return response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};

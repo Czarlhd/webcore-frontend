@@ -11,6 +11,7 @@ import {
 	changeAbstraction,
 	updateAttribute,
 	createAssociation,
+	moveClass,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
@@ -90,6 +91,7 @@ export default function EditorPage() {
 		if (userToken !== "") {
 			await deleteClass(userToken, classId.split("-")[1]);
 			await getDiagramButton();
+			handleAttModalClose(true);
 		} else {
 			alert("Please Log In First");
 		}
@@ -202,6 +204,62 @@ export default function EditorPage() {
 
 	const [showModal, setShowModal] = useState(false);
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+	const [isMouseDown, setIsMouseDown] = useState(false);
+	const [isTrackingEnabled, setIsTrackingEnabled] = useState(false);
+	const [classMousePosition, setClassMousePosition] = useState({
+		x: 0,
+		y: 0,
+	});
+
+	useEffect(() => {
+		if (isTrackingEnabled) {
+			// Attach event listeners to the document
+			document.addEventListener("mousemove", handleMouseMove);
+			// document.addEventListener("mousedown", handleMouseDown);
+			document.addEventListener("mouseup", handleMouseUp);
+
+			// Detach event listeners when the component unmounts or when tracking is disabled
+			return () => {
+				document.removeEventListener("mousemove", handleMouseMove);
+				// document.removeEventListener("mousedown", handleMouseDown);
+				document.removeEventListener("mouseup", handleMouseUp);
+			};
+		}
+	}, [isTrackingEnabled]);
+
+	function handleMouseMove(event) {
+		if (isTrackingEnabled) {
+			setClassMousePosition({ x: event.clientX, y: event.clientY });
+			// console.log(`Mouse moved to (${event.clientX}, ${event.clientY})`);
+
+			// let newJson = jsonSvgRes;
+
+			// newJson.layout.containers[0].value.find((container) => {
+			// 	return container.key === classId.split("-")[1];
+			// }).x = event.clientX;
+			// newJson.layout.containers[0].value.find((container) => {
+			// 	return container.key === classId.split("-")[1];
+			// }).y = event.clientY;
+
+			// setJsonSvgResp(newJson);
+
+			// console.log(
+			// 	"coord",
+			// 	newJson.layout.containers[0].value.find((container) => {
+			// 		return container.key === classId.split("-")[1];
+			// 	})
+			// );
+		}
+	}
+
+	function handleMouseUp(event) {
+		// setIsMouseDown(false);
+
+		setClassMousePosition({ x: event.clientX, y: event.clientY });
+		setIsTrackingEnabled(false);
+
+		console.log(`Mouse clicked at (${event.clientX}, ${event.clientY})`);
+	}
 
 	const handleModalClose = () => {
 		setAttShowModal(false);
@@ -227,6 +285,8 @@ export default function EditorPage() {
 		} else if (option === "Create Association") {
 			setAttShowModal(false);
 			setCreateAssociationModal(true);
+		} else if (option === "Move Class") {
+			setIsTrackingEnabled(true);
 		}
 	};
 
@@ -285,9 +345,24 @@ export default function EditorPage() {
 	const [showCreateAssociationModal, setCreateAssociationModal] =
 		useState(false);
 
-	function createAssociationButton(fromClass, toClass, bidirectional) {
+	async function createAssociationButton(fromClass, toClass, bidirectional) {
 		if (userToken !== "") {
-			createAssociation(userToken, fromClass, toClass, bidirectional);
+			await createAssociation(
+				userToken,
+				fromClass,
+				toClass,
+				bidirectional
+			);
+			getDiagramButton();
+		} else {
+			console.log("Please Log In First");
+		}
+	}
+
+	async function moveClassButton() {
+		if (userToken !== "") {
+			console.log("here");
+			await moveClass(userToken, classId.split("-")[1], 100, 100);
 			getDiagramButton();
 		} else {
 			console.log("Please Log In First");
@@ -302,6 +377,7 @@ export default function EditorPage() {
 					options={[
 						"Add Attribute",
 						"Create Association",
+						"Move Class",
 						"Delete Class",
 					]}
 					onOptionSelect={handleOptionSelect}
@@ -351,6 +427,7 @@ export default function EditorPage() {
 					createClassButton={createClassButton}
 					handleCloseClick={handleModalClose}
 					position={mousePosition}
+					svgRef={svg}
 				/>
 			)}
 			{showEnumModal && (
@@ -394,6 +471,15 @@ export default function EditorPage() {
 							<div id="selected-shape"></div>
 						</div>
 						<div>
+							<div>Move Class</div>
+							<button
+								id="moveClassButton"
+								onClick={moveClassButton}
+							>
+								Move
+							</button>
+						</div>
+						{/* <div>
 							<div>Change Class Name:</div>
 							<input
 								id="newclassName"
@@ -408,7 +494,7 @@ export default function EditorPage() {
 									Change Class Name
 								</button>
 							</div>
-						</div>
+						</div> */}
 					</div>
 				</div>
 				<div className="svg-container">

@@ -5,6 +5,7 @@ export default function CreateClassModal({
 	createClassButton,
 	handleCloseClick,
 	position,
+	svgRef,
 }) {
 	const { x, y } = position;
 	const modalStyle = {
@@ -17,15 +18,25 @@ export default function CreateClassModal({
 	const [isInterface, setIsInterface] = useState(false);
 	const [isAbstract, setIsAbstract] = useState(false);
 
-	//TODO X and Y need to change depending on the screensize (inspect open example) do the same for enumeration
 	const handleCreateClass = () => {
-		console.log("First abstract: ", isAbstract);
+		const svg = svgRef.current.querySelector("svg");
+		const point = svg.createSVGPoint();
+		point.x = x;
+		point.y = y;
+
+		const updatedX = Math.round(
+			point.matrixTransform(svg.getScreenCTM().inverse()).x
+		);
+		const updatedY = Math.round(
+			point.matrixTransform(svg.getScreenCTM().inverse()).y
+		);
+
 		createClassButton(
 			className,
 			dataType,
 			isInterface,
-			x - 192,
-			y - 141,
+			updatedX,
+			updatedY,
 			isAbstract
 		);
 		handleCloseClick();

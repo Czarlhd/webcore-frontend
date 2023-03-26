@@ -349,6 +349,14 @@ function createAssociation(
 		return coord.key === class2Id;
 	}).value;
 
+	const ass1 = class1.associationEnds.find((assoc) => {
+		return assoc._id === end1;
+	});
+
+	const ass2 = class2.associationEnds.find((assoc) => {
+		return assoc._id === end2;
+	});
+
 	const newCoord = getAdjustedCoordinates(
 		coord1.x,
 		coord1.y,
@@ -365,9 +373,17 @@ function createAssociation(
 	line.setAttribute("y2", `${newCoord.y2}`);
 	line.setAttribute("stroke", "black");
 	line.setAttribute("strokeWidth", "2");
+
+	if (ass1?.navigable === false) {
+		line.setAttribute("marker-start", "url(#arrowheadstart)");
+	} else if (ass2?.navigable === false) {
+		line.setAttribute("marker-end", "url(#arrowheadend)");
+	} else {
+		line.setAttribute("marker-end", "url(#arrowheadend)");
+		line.setAttribute("marker-start", "url(#arrowheadstart)");
+	}
 	// line.setAttribute("marker-end", "url(#diamond)");
-	line.setAttribute("marker-end", "url(#arrowheadend)");
-	line.setAttribute("marker-start", "url(#arrowheadstart)"); //TODO change the way the arrow points
+	// line.setAttribute("marker-start", "url(#arrowheadstart)"); //TODO change the way the arrow points
 	svg.appendChild(line);
 }
 

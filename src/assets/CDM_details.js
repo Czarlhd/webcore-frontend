@@ -421,13 +421,13 @@ export const ONE_ASSOCIATION = {
 			associationEnds: [
 				{
 					_id: "21",
-					name: "myClass1",
+					name: "myClass2",
 					assoc: "23",
 					lowerBound: 1,
 				},
 				{
 					_id: "29",
-					name: "myClass1",
+					name: "myClass3",
 					assoc: "28",
 					lowerBound: 1,
 				},
@@ -452,7 +452,7 @@ export const ONE_ASSOCIATION = {
 			associationEnds: [
 				{
 					_id: "22",
-					name: "myClass2",
+					name: "myClass1",
 					assoc: "23",
 					lowerBound: 1,
 				},
@@ -472,7 +472,7 @@ export const ONE_ASSOCIATION = {
 			associationEnds: [
 				{
 					_id: "25",
-					name: "myClass3",
+					name: "myClass1",
 					assoc: "28",
 					lowerBound: 1,
 				},
@@ -547,7 +547,7 @@ export const ONE_ASSOCIATION = {
 		{
 			_id: "28",
 			name: "Class1_Class3",
-			ends: ["25", "29"],
+			ends: ["29", "25"],
 		},
 	],
 	layout: {
