@@ -6,10 +6,10 @@ const headers = {
 	"Allow-Control-Allow-Origin": "*",
 };
 
-export const createUser = async () => {
+export const createUser = async (username, password) => {
 	const user = {
-		username: "yasmina",
-		password: "matta",
+		username: username,
+		password: password,
 	};
 
 	return await axios
@@ -26,10 +26,10 @@ export const createUser = async () => {
 		});
 };
 
-export const logIn = async () => {
+export const logIn = async (username, password) => {
 	const user = {
-		username: "yasmina",
-		password: "matta",
+		username: username,
+		password: password,
 	};
 	return await axios
 		.post(API_URL + "user/public/login", user, {

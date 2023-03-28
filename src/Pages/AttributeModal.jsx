@@ -9,12 +9,31 @@ export default function AttributeModal({
 	buttonName,
 	selectedAttribute,
 	handleCloseClick,
+	height,
+	width,
 }) {
 	const { x, y } = position;
+
+	let updatedX = x;
+	let updatedY = y;
+
+	if (buttonName === "Add") {
+		updatedX = x + 200 > width ? x - 345 : x + 200;
+		updatedY = y;
+	}
+
+	if (buttonName === "Update") {
+		updatedX = x - 60;
+		updatedY = y + 100 > height ? y - 150 : y + 10;
+	}
+
 	const modalStyle = {
-		top: buttonName === "Add" ? y : y + 10,
-		left: buttonName === "Add" ? x + 200 : x - 60,
+		top: updatedY,
+		left: updatedX,
 	};
+
+	// top: y > height - 200 ? y - 150 : y,
+	// 	left: x + 400 > width ? x - 150 : x + 100,
 
 	return (
 		<div
@@ -32,7 +51,11 @@ export default function AttributeModal({
 			<span className="close" onClick={handleCloseClick}>
 				&times;
 			</span>
-			<div>
+			<div
+				style={{
+					backgroundColor: buttonName === "Update" ? "red" : "none",
+				}}
+			>
 				{buttonName} Attribute:{" "}
 				<span style={{ fontWeight: "bold" }}>
 					{selectedAttribute.split(" ")[1]}

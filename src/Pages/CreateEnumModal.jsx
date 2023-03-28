@@ -5,6 +5,8 @@ export default function CreateEnumModal({
 	createEnumButton,
 	handleCloseClick,
 	position,
+	height,
+	width,
 }) {
 	const { x, y } = position;
 	const modalStyle = {

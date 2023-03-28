@@ -6,6 +6,8 @@ export default function RightClickModal({
 	position,
 	options,
 	onOptionSelect,
+	height,
+	width,
 }) {
 	const { x, y } = position;
 	const modalStyle = {

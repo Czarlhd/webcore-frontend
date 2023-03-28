@@ -12,6 +12,7 @@ import {
 	updateAttribute,
 	createAssociation,
 	moveClass,
+	createUser,
 } from "../functionalities/ApisFunctionalities";
 import { ONE_ASSOCIATION } from "../assets/CDM_details";
 import Modal from "./Modal";
@@ -22,16 +23,24 @@ import CreateEnumModal from "./CreateEnumModal";
 import CreateAssociationModal from "./CreateAssociationModal";
 
 export default function EditorPage() {
+	const windowWidth = useRef(window.innerWidth);
+	const windowHeight = useRef(window.innerHeight);
+
+	console.log("width: ", windowWidth.current);
+	console.log("height: ", windowHeight.current);
+
 	const [classId, setClassId] = useState("");
 	const [userToken, setUserToken] = useState("");
 	const [jsonSvgRes, setJsonSvgResp] = useState(ONE_ASSOCIATION);
 	const [types, setTypes] = useState([]);
 	const [attributesId, setAttributeId] = useState("");
 
+	const [isTrackingEnabled, setIsTrackingEnabled] = useState(false);
+
 	const svg = useRef(null);
 
 	useEffect(() => {
-		if (jsonSvgRes) {
+		if (jsonSvgRes && !isTrackingEnabled) {
 			let svgImage = CreateSvg(jsonSvgRes);
 			if (svg.current) {
 				svg.current.innerHTML = "";
@@ -39,14 +48,18 @@ export default function EditorPage() {
 			}
 			if (types.length === 0) {
 				jsonSvgRes["types"].forEach((element) => {
-					element.eClass = element.eClass?.split("CD")[1];
-					// console.log(element);
-					setTypes((types) => [...types, element]);
+					const tmpEl = {
+						eClass: element.eClass?.split("CD")[1],
+						_id: element._id,
+					};
+
+					if (tmpEl.eClass !== "Enum")
+						setTypes((types) => [...types, tmpEl]);
 				});
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [jsonSvgRes]);
+	}, [jsonSvgRes, isTrackingEnabled]);
 
 	function svgOnClick(e) {
 		const elId = e.target.id;
@@ -78,13 +91,21 @@ export default function EditorPage() {
 		var el = document.getElementById(elId);
 
 		let className = null;
+		let attr = null;
 
 		if (el && elId.includes("className-")) {
 			className = el.textContent;
 		}
+		if (el && elId.includes("attribute-")) {
+			attr = el.textContent;
+		}
 		if (className)
 			document.getElementById("selected-shape").textContent =
 				"Selected Class: " + className;
+		if (attr) {
+			document.getElementById("selected-shape").textContent =
+				"Selected Attribute: " + attr;
+		}
 	}
 
 	async function removeClass() {
@@ -103,14 +124,21 @@ export default function EditorPage() {
 	}
 
 	async function logInButton() {
-		// if (userToken !== "") {
 		console.log("Log In Button Clicked");
-		var logInResult = await logIn();
+		let logInResult = await logIn(username, password);
 		setUserToken(logInResult.split("'")[1]);
-		// setUserToken(logIn().split("'"));
-		// } else {
-		// createUser();
-		// }
+		setUsername("");
+		setPassword("");
+	}
+
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+
+	async function createUserButton() {
+		let loginRes = await createUser(username, password);
+		setUserToken(loginRes.split("'")[1]);
+		setUsername("");
+		setPassword("");
 	}
 
 	async function getDiagramButton() {
@@ -204,8 +232,7 @@ export default function EditorPage() {
 
 	const [showModal, setShowModal] = useState(false);
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-	const [isMouseDown, setIsMouseDown] = useState(false);
-	const [isTrackingEnabled, setIsTrackingEnabled] = useState(false);
+	// const [isMouseDown, setIsMouseDown] = useState(false);
 	const [classMousePosition, setClassMousePosition] = useState({
 		x: 0,
 		y: 0,
@@ -230,25 +257,6 @@ export default function EditorPage() {
 	function handleMouseMove(event) {
 		if (isTrackingEnabled) {
 			setClassMousePosition({ x: event.clientX, y: event.clientY });
-			// console.log(`Mouse moved to (${event.clientX}, ${event.clientY})`);
-
-			// let newJson = jsonSvgRes;
-
-			// newJson.layout.containers[0].value.find((container) => {
-			// 	return container.key === classId.split("-")[1];
-			// }).x = event.clientX;
-			// newJson.layout.containers[0].value.find((container) => {
-			// 	return container.key === classId.split("-")[1];
-			// }).y = event.clientY;
-
-			// setJsonSvgResp(newJson);
-
-			// console.log(
-			// 	"coord",
-			// 	newJson.layout.containers[0].value.find((container) => {
-			// 		return container.key === classId.split("-")[1];
-			// 	})
-			// );
 		}
 	}
 
@@ -259,6 +267,36 @@ export default function EditorPage() {
 		setIsTrackingEnabled(false);
 
 		console.log(`Mouse clicked at (${event.clientX}, ${event.clientY})`);
+
+		let newJson = jsonSvgRes;
+		console.log("jsonSvgRes", jsonSvgRes);
+
+		const svgref = svg.current.querySelector("svg");
+		const point = svgref.createSVGPoint();
+		point.x = event.clientX;
+		point.y = event.clientY;
+
+		const updatedX = Math.round(
+			point.matrixTransform(svgref.getScreenCTM().inverse()).x
+		);
+		const updatedY = Math.round(
+			point.matrixTransform(svgref.getScreenCTM().inverse()).y
+		);
+
+		newJson.layout.containers[0].value.find((container, index) => {
+			return container.key === classId.split("-")[1];
+		}).value.x = updatedX;
+		newJson.layout.containers[0].value.find((container, index) => {
+			return container.key === classId.split("-")[1];
+		}).value.y = updatedY;
+
+		console.log("newJson", newJson);
+
+		setJsonSvgResp(newJson);
+
+		handleModalClose();
+
+		// moveClassButton(updatedX, updatedY);
 	}
 
 	const handleModalClose = () => {
@@ -359,10 +397,10 @@ export default function EditorPage() {
 		}
 	}
 
-	async function moveClassButton() {
+	async function moveClassButton(x, y) {
 		if (userToken !== "") {
 			console.log("here");
-			await moveClass(userToken, classId.split("-")[1], 100, 100);
+			await moveClass(userToken, classId.split("-")[1], x, y);
 			getDiagramButton();
 		} else {
 			console.log("Please Log In First");
@@ -383,6 +421,8 @@ export default function EditorPage() {
 					onOptionSelect={handleOptionSelect}
 					onClose={handleModalClose}
 					position={mousePosition}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showAttModal && (
@@ -396,6 +436,8 @@ export default function EditorPage() {
 					buttonName={"Add"}
 					selectedAttribute={""}
 					handleCloseClick={handleModalClose}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showUpdateAttModal && (
@@ -411,6 +453,8 @@ export default function EditorPage() {
 						document.getElementById(attributesId).textContent
 					}
 					handleCloseClick={handleModalClose}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showRightClickMenu && (
@@ -420,6 +464,8 @@ export default function EditorPage() {
 					handleCloseClick={handleModalClose}
 					options={["Create Class", "Create Enumeration"]}
 					onOptionSelect={handleOptionSelect}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showCreateClassModal && (
@@ -428,6 +474,8 @@ export default function EditorPage() {
 					handleCloseClick={handleModalClose}
 					position={mousePosition}
 					svgRef={svg}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showEnumModal && (
@@ -435,6 +483,8 @@ export default function EditorPage() {
 					createEnumButton={createEnumButton}
 					handleCloseClick={handleModalClose}
 					position={mousePosition}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			{showCreateAssociationModal && (
@@ -444,16 +494,80 @@ export default function EditorPage() {
 					classes={jsonSvgRes["classes"]}
 					fromClassId={classId.split("-")[1]}
 					createAssociationButton={createAssociationButton}
+					height={windowHeight.current}
+					width={windowWidth.current}
 				/>
 			)}
 			<div className="row">
-				<div className="action-container">
+				<div
+					className="action-container"
+					style={{ minWidth: "250px", maxWidth: "250px" }}
+				>
 					<div
 						id="editor-sidebar"
 						className="action-container-children"
 					>
-						<div>
-							<button id="logInButton" onClick={logInButton}>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								padding: "10px 0px",
+							}}
+						>
+							<div style={{ margin: "5px 0px" }}>Create User</div>
+							<input
+								style={{ margin: "5px 0px" }}
+								type="text"
+								id="createUser"
+								placeholder="username"
+								onChange={(e) => {
+									setUsername(e.target.value);
+								}}
+							/>
+							<input
+								style={{ margin: "5px 0px" }}
+								type="password"
+								id="createPassword"
+								placeholder="password"
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+							<button
+								style={{ margin: "5px 0px" }}
+								id="createUserButton"
+								onClick={createUserButton}
+							>
+								Create User
+							</button>
+						</div>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								padding: "10px 0px",
+							}}
+						>
+							<div style={{ margin: "5px 0px" }}>Log in</div>
+							<input
+								style={{ margin: "5px 0px" }}
+								type="text"
+								id="logInUser"
+								placeholder="username"
+								onChange={(e) => {
+									setUsername(e.target.value);
+								}}
+							/>
+							<input
+								style={{ margin: "5px 0px" }}
+								type="password"
+								id="logInPassword"
+								placeholder="password"
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+							<button
+								style={{ margin: "5px 0px" }}
+								id="logInButton"
+								onClick={logInButton}
+							>
 								LogIn
 							</button>
 						</div>
@@ -466,41 +580,13 @@ export default function EditorPage() {
 								Get Diagram
 							</button>
 						</div>
-						<div>
-							<p>Properties Editor: </p>
-							<div id="selected-shape"></div>
-						</div>
-						<div>
-							<div>Move Class</div>
-							<button
-								id="moveClassButton"
-								onClick={moveClassButton}
-							>
-								Move
-							</button>
-						</div>
-						{/* <div>
-							<div>Change Class Name:</div>
-							<input
-								id="newclassName"
-								type="text"
-								placeholder="Class Name"
-							/>
-							<div>
-								<button
-									onClick={changeClassName}
-									id="newclassNameButton"
-								>
-									Change Class Name
-								</button>
-							</div>
-						</div> */}
 					</div>
 				</div>
 				<div className="svg-container">
 					{/* <MakeDraggable svgOnClick={svgOnClick} id="class-1" svg={svg} /> */}
 					<div className="m-2 p-2 bg-light border">
 						<p>Class Editor: </p>
+						<div id="selected-shape">Selected: </div>
 						<div onClick={svgOnClick} ref={svg} id="class-editor" />
 					</div>
 				</div>

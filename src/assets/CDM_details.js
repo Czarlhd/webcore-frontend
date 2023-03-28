@@ -580,8 +580,8 @@ export const ONE_ASSOCIATION = {
 						key: "24",
 						value: {
 							_id: "null",
-							x: 356.0,
-							y: 473.0,
+							x: 760.0,
+							y: 470.0,
 						},
 					},
 					{

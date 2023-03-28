@@ -6,11 +6,13 @@ export default function CreateClassModal({
 	handleCloseClick,
 	position,
 	svgRef,
+	height,
+	width,
 }) {
 	const { x, y } = position;
 	const modalStyle = {
-		top: y,
-		left: x - 195,
+		top: y + 100 > height ? y - 100 : y,
+		left: x - 195 > width ? x - 250 : x - 195,
 	};
 
 	const [className, setClassName] = useState("");

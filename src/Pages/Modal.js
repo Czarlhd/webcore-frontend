@@ -16,8 +16,8 @@ export default function Modal(props) {
 
 	const { x, y } = props.position;
 	const modalStyle = {
-		top: y,
-		left: x + 50,
+		top: y + 100 > props.height ? y - 150 : y,
+		left: x + 250 > props.width ? x - 150 : x + 50,
 	};
 
 	return (

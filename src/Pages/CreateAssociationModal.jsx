@@ -6,11 +6,13 @@ export default function CreateAssociationModal({
 	classes,
 	fromClassId,
 	createAssociationButton,
+	height,
+	width,
 }) {
 	const { x, y } = position;
 	const modalStyle = {
-		top: y,
-		left: x + 200,
+		top: y > height - 200 ? y - 150 : y,
+		left: x + 400 > width ? x - 150 : x + 100,
 	};
 
 	const fromClass = classes.find((el) => el._id === fromClassId).name;

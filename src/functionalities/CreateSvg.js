@@ -592,7 +592,7 @@ function createEnumeration(svg, name, enumId, x, y, literals) {
 			let y = 40 + index * 15;
 
 			let literalName = document.createElementNS(NS, "text");
-			literalName.setAttribute("id", "attribute-" + literal._id);
+			literalName.setAttribute("id", "literal-" + literal._id);
 			literalName.setAttribute("x", "5.5");
 			literalName.setAttribute("y", `${y}`);
 			literalName.setAttribute("editable", "true");
