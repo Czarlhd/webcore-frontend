@@ -26,9 +26,6 @@ export default function EditorPage() {
 	const windowWidth = useRef(window.innerWidth);
 	const windowHeight = useRef(window.innerHeight);
 
-	console.log("width: ", windowWidth.current);
-	console.log("height: ", windowHeight.current);
-
 	const [classId, setClassId] = useState("");
 	const [userToken, setUserToken] = useState("");
 	const [jsonSvgRes, setJsonSvgResp] = useState(ONE_ASSOCIATION);
@@ -408,7 +405,10 @@ export default function EditorPage() {
 	}
 
 	return (
-		<div className="container-fluid">
+		<div
+			className="container-fluid"
+			style={{ cursor: isTrackingEnabled ? "crosshair" : "auto" }}
+		>
 			{showModal && (
 				<Modal
 					show={showModal}
@@ -586,8 +586,18 @@ export default function EditorPage() {
 					{/* <MakeDraggable svgOnClick={svgOnClick} id="class-1" svg={svg} /> */}
 					<div className="m-2 p-2 bg-light border">
 						<p>Class Editor: </p>
-						<div id="selected-shape">Selected: </div>
-						<div onClick={svgOnClick} ref={svg} id="class-editor" />
+						<div
+							id="selected-shape"
+							style={{ padding: "10px 0px" }}
+						>
+							Selected:{" "}
+						</div>
+						<div
+							onClick={svgOnClick}
+							ref={svg}
+							id="class-editor"
+							style={{ border: "1px solid black" }}
+						/>
 					</div>
 				</div>
 			</div>
