@@ -190,8 +190,7 @@ function createClassBox(
 	let g = document.createElementNS(NS, "g");
 	g.setAttribute("transform", `translate(${x}, ${y})`);
 	g.setAttribute("name", name);
-	g.setAttribute("id", "class-" + classId); //? This is the id of the class
-	// g.setAttribute("pointer-events", "all");
+	g.setAttribute("id", "class-" + classId);
 	svg.appendChild(g);
 
 	/**

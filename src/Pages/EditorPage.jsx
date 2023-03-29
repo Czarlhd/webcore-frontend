@@ -92,6 +92,9 @@ export default function EditorPage() {
 
 		if (el && elId.includes("className-")) {
 			className = el.textContent;
+			let id = "class-" + elId.split("-")[1];
+			changePathColor("black", "classDiagram");
+			changePathColor("blue", id);
 		}
 		if (el && elId.includes("attribute-")) {
 			attr = el.textContent;
@@ -99,7 +102,7 @@ export default function EditorPage() {
 		if (className)
 			document.getElementById("selected-shape").textContent =
 				"Selected Class: " + className;
-		if (attr) {
+		else if (attr) {
 			document.getElementById("selected-shape").textContent =
 				"Selected Attribute: " + attr;
 		}
@@ -266,7 +269,6 @@ export default function EditorPage() {
 		console.log(`Mouse clicked at (${event.clientX}, ${event.clientY})`);
 
 		let newJson = jsonSvgRes;
-		console.log("jsonSvgRes", jsonSvgRes);
 
 		const svgref = svg.current.querySelector("svg");
 		const point = svgref.createSVGPoint();
@@ -287,8 +289,6 @@ export default function EditorPage() {
 			return container.key === classId.split("-")[1];
 		}).value.y = updatedY;
 
-		console.log("newJson", newJson);
-
 		setJsonSvgResp(newJson);
 
 		handleModalClose();
@@ -304,6 +304,7 @@ export default function EditorPage() {
 		setCreateClassModal(false);
 		setShowEnumModal(false);
 		setCreateAssociationModal(false);
+		changePathColor("black", "classDiagram");
 	};
 
 	const handleOptionSelect = (option) => {
@@ -402,6 +403,13 @@ export default function EditorPage() {
 		} else {
 			console.log("Please Log In First");
 		}
+	}
+
+	function changePathColor(color, id) {
+		const paths = svg.current.querySelectorAll(`#${id} path`);
+		paths.forEach((path) => {
+			path.setAttribute("stroke", color);
+		});
 	}
 
 	return (
