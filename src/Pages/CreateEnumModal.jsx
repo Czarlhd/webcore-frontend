@@ -7,6 +7,7 @@ export default function CreateEnumModal({
 	position,
 	height,
 	width,
+	svgRef,
 }) {
 	const { x, y } = position;
 	const modalStyle = {
@@ -14,10 +15,24 @@ export default function CreateEnumModal({
 		left: x - 195,
 	};
 
+	//todo update x y to be relative to the canvas
+
 	const [enumName, setEnumName] = useState("");
 
 	const handleCreateEnum = () => {
-		createEnumButton(enumName, x - 192, y - 141);
+		const svg = svgRef.current.querySelector("svg");
+		const point = svg.createSVGPoint();
+		point.x = x;
+		point.y = y;
+
+		const updatedX = Math.round(
+			point.matrixTransform(svg.getScreenCTM().inverse()).x
+		);
+		const updatedY = Math.round(
+			point.matrixTransform(svg.getScreenCTM().inverse()).y
+		);
+
+		createEnumButton(enumName, updatedX, updatedY);
 		handleCloseClick();
 	};
 

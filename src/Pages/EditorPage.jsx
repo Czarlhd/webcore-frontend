@@ -112,7 +112,9 @@ export default function EditorPage() {
 		if (userToken !== "") {
 			await deleteClass(userToken, classId.split("-")[1]);
 			await getDiagramButton();
-			handleAttModalClose(true);
+			handleModalClose();
+			document.getElementById("selected-shape").textContent =
+				"Selected: ";
 		} else {
 			alert("Please Log In First");
 		}
@@ -136,6 +138,7 @@ export default function EditorPage() {
 
 	async function createUserButton() {
 		let loginRes = await createUser(username, password);
+		console.log(loginRes);
 		setUserToken(loginRes.split("'")[1]);
 		setUsername("");
 		setPassword("");
@@ -493,6 +496,7 @@ export default function EditorPage() {
 					position={mousePosition}
 					height={windowHeight.current}
 					width={windowWidth.current}
+					svgRef={svg}
 				/>
 			)}
 			{showCreateAssociationModal && (

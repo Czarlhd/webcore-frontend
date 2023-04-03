@@ -62,7 +62,6 @@ function jsonToSVG(svg, json) {
 				);
 			});
 
-			//TODO Create Associations
 			//"?." checks if association exists
 			if (json?.associations) {
 				json.associations.forEach((association) => {
@@ -382,7 +381,6 @@ function createAssociation(
 		line.setAttribute("marker-start", "url(#arrowheadstart)");
 	}
 	// line.setAttribute("marker-end", "url(#diamond)");
-	// line.setAttribute("marker-start", "url(#arrowheadstart)"); //TODO change the way the arrow points
 	svg.appendChild(line);
 }
 
