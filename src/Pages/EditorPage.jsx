@@ -28,7 +28,7 @@ export default function EditorPage() {
 
 	const [classId, setClassId] = useState("");
 	const [userToken, setUserToken] = useState("");
-	const [jsonSvgRes, setJsonSvgResp] = useState(ONE_ASSOCIATION);
+	const [jsonSvgRes, setJsonSvgResp] = useState(null);
 	const [types, setTypes] = useState([]);
 	const [attributesId, setAttributeId] = useState("");
 
@@ -50,8 +50,8 @@ export default function EditorPage() {
 						_id: element._id,
 					};
 
-					if (tmpEl.eClass !== "Enum")
-						setTypes((types) => [...types, tmpEl]);
+					if (tmpEl.eClass === "Enum") tmpEl.eClass = element.name;
+					setTypes((types) => [...types, tmpEl]);
 				});
 			}
 		}
@@ -138,7 +138,6 @@ export default function EditorPage() {
 
 	async function createUserButton() {
 		let loginRes = await createUser(username, password);
-		console.log(loginRes);
 		setUserToken(loginRes.split("'")[1]);
 		setUsername("");
 		setPassword("");
